@@ -1,0 +1,171 @@
+{
+  "status": "Berhasil",
+  "message": "Data berhasil diambil",
+  "data": {
+    "data": [
+      {
+        "tari": [
+          {
+            "id": 1,
+            "name": "Tari 1",
+            "level": "Level Pemula",
+            "description": "Deskripsi Tari 1",
+            "imageUrl": "https://example.com/tari1.jpg",
+            "asal": "Asal Tari 1",
+            "gerakan": [
+              {
+                "id": 1,
+                "name": "Gerakan 1",
+                "description": "Deskripsi Gerakan 1",
+                "imageUrl": "https://example.com/gerakan1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Gerakan 2",
+                "description": "Deskripsi Gerakan 2",
+                "imageUrl": "https://example.com/gerakan2.jpg"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "Tari 2",
+            "level": "Level Menengah",
+            "description": "Deskripsi Tari 2",
+            "imageUrl": "https://example.com/tari2.jpg",
+            "asal": "Asal Tari 2",
+            "gerakan": [
+              {
+                "id": 1,
+                "name": "Gerakan 1",
+                "description": "Deskripsi Gerakan 1",
+                "imageUrl": "https://example.com/gerakan1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Gerakan 2",
+                "description": "Deskripsi Gerakan 2",
+                "imageUrl": "https://example.com/gerakan2.jpg"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Tari 3",
+            "level": "Level Mahir",
+            "description": "Deskripsi Tari 3",
+            "imageUrl": "https://example.com/tari3.jpg",
+            "asal": "Asal Tari 3",
+            "gerakan": [
+              {
+                "id": 1,
+                "name": "Gerakan 1",
+                "description": "Deskripsi Gerakan 1",
+                "imageUrl": "https://example.com/gerakan1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Gerakan 2",
+                "description": "Deskripsi Gerakan 2",
+                "imageUrl": "https://example.com/gerakan2.jpg"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "seni lainnya": [
+          {
+            "id": 1,
+            "name": "Gamelan",
+            "descripstion": "Deskripsi Gamelan",
+            "imageUrl": "https://example.com/gamelan.jpg",
+            "detail": [
+              {
+                "id": 1,
+                "name": "Gamelan 1",
+                "description": "Deskripsi Gamelan 1",
+                "category": "Gamelan",
+                "imageUrl": "https://example.com/gamelan1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Gamelan 2",
+                "description": "Deskripsi Gamelan 2",
+                "category": "Gamelan",
+                "imageUrl": "https://example.com/gamelan2.jpg"
+              }
+            ]
+          },
+          {
+            "id": 2,
+            "name": "Wayang",
+            "descripstion": "Deskripsi Wayang",
+            "imageUrl": "https://example.com/wayang.jpg",
+            "detail": [
+              {
+                "id": 1,
+                "name": "Wayang 1",
+                "description": "Deskripsi Wayang 1",
+                "category": "Wayang",
+                "imageUrl": "https://example.com/wayang1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Wayang 2",
+                "description": "Deskripsi Wayang 2",
+                "category": "Wayang",
+                "imageUrl": "https://example.com/wayang1.jpg"
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "name": "Aksara Jawa",
+            "descripstion": "Deskripsi Aksara Jawa",
+            "imageUrl": "https://example.com/aksara.jpg",
+            "detail": [
+              {
+                "id": 1,
+                "name": "Aksara Jawa 1",
+                "description": "Deskripsi Aksara Jawa 1",
+                "category": "Aksara Jawa",
+                "imageUrl": "https://example.com/aksara1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Aksara Jawa 2",
+                "description": "Deskripsi Aksara Jawa 2",
+                "category": "Aksara Jawa",
+                "imageUrl": "https://example.com/aksara2.jpg"
+              }
+            ]
+          },
+          {
+            "id": 4,
+            "name": "Tari Tradisional",
+            "descripstion": "Deskripsi Tari Tradisional",
+            "imageUrl": "https://example.com/taritradisional.jpg",
+            "detail": [
+              {
+                "id": 1,
+                "name": "Tari Tradisional 1",
+                "description": "Deskripsi Tari Tradisional 1",
+                "category": "Tari Tradisional",
+                "imageUrl": "https://example.com/taritradisional1.jpg"
+              },
+              {
+                "id": 2,
+                "name": "Tari Tradisional 2",
+                "description": "Deskripsi Tari Tradisional 2",
+                "category": "Tari Tradisional",
+                "imageUrl": "https://example.com/taritradisional1.jpg"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "token": "auth_token"
+}

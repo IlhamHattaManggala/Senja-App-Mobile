@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "271300130482",
+    "project_id": "my-capstone-smt6",
+    "storage_bucket": "my-capstone-smt6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271300130482:android:dc4637a571293a8dbafbab",
+        "android_client_info": {
+          "package_name": "com.example.senja_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr1u0OI_CPn8xfHbrZixOj3-5iJSKcxvo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
