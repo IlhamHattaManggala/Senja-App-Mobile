@@ -10,9 +10,8 @@ class GerakanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    final data = Get.arguments as Map<String, dynamic>;
-    tari = Tari.fromJson(data); // <-- Ini penting!
-    gerakanList.assignAll(tari.gerakanTari ?? []);
+    tari = Get.arguments as Tari; // ambil langsung objek Tari dari arguments
+    loadGerakan();
   }
 
   @override
@@ -23,5 +22,17 @@ class GerakanController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void loadGerakan() {
+    isLoading.value = true;
+
+    // Misal ambil dari properti langsung
+    gerakanList.assignAll(tari.gerakanTari ?? []);
+
+    // Jika perlu delay loading untuk simulasi atau animasi spinner
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isLoading.value = false;
+    });
   }
 }

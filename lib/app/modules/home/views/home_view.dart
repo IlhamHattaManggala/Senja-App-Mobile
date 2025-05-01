@@ -213,6 +213,7 @@ class HomeView extends GetView<HomeController> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         onTap: () {
+                                          print(tari);
                                           Get.toNamed('/gerakan',
                                               arguments: tari);
                                         },

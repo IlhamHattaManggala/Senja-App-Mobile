@@ -91,36 +91,11 @@ class LaporanController extends GetxController {
       ];
 
       historiData.value = [
-        {
-          'date': '1 Jan 2023',
-          'gerakan': 'Gerakan 1',
-          'score': '80',
-          'ov': '70'
-        },
-        {
-          'date': '2 Jan 2023',
-          'gerakan': 'Gerakan 1',
-          'score': '75',
-          'ov': '80'
-        },
-        {
-          'date': '3 Jan 2023',
-          'gerakan': 'Gerakan 1',
-          'score': '90',
-          'ov': '95'
-        },
-        {
-          'date': '4 Jan 2023',
-          'gerakan': 'Gerakan 1',
-          'score': '65',
-          'ov': '70'
-        },
-        {
-          'date': '5 Jan 2023',
-          'gerakan': 'Gerakan 1',
-          'score': '60',
-          'ov': '65'
-        },
+        {'date': '1 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '80'},
+        {'date': '2 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '75'},
+        {'date': '3 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '90'},
+        {'date': '4 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '65'},
+        {'date': '5 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '60'},
       ];
     }
   }

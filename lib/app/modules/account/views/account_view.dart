@@ -17,60 +17,61 @@ class AccountView extends GetView<AccountController> {
         child: Column(
           children: [
             Container(
-              height: 220,
+              height: 300,
               padding: EdgeInsets.all(15),
               decoration: BoxDecoration(color: PalleteColor.green550),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Profile',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: PalleteColor.green50,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Icon(
-                        Icons.edit_square,
-                        color: PalleteColor.green50,
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Obx(() {
-                    final user = controller.user.value;
-                    if (user == null) {
-                      return const CircularProgressIndicator(); // atau Skeleton
-                    }
-                    return Column(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ProfileAvatar(
-                            imageUrl: user.avatar ?? '',
-                            onTap: () {
-                              print('Tombol Ditekan');
-                            }),
                         Text(
-                          user.name,
+                          'Profile',
                           style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: PalleteColor.green50),
+                              fontSize: 16,
+                              color: PalleteColor.green50,
+                              fontWeight: FontWeight.bold),
                         ),
-                        Text(
-                          user.email,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: PalleteColor.green50),
-                        )
                       ],
-                    );
-                  }),
-                ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Obx(() {
+                      final user = controller.user.value;
+                      if (user == null) {
+                        return const CircularProgressIndicator(); // atau Skeleton
+                      }
+                      return Column(
+                        children: [
+                          ProfileAvatar(
+                              imageUrl: user.avatar ?? '',
+                              onTap: () {
+                                print('Tombol Ditekan');
+                              }),
+                          Text(
+                            user.name ?? "name",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: PalleteColor.green50),
+                          ),
+                          Text(
+                            user.email ?? "email@gmail.com",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: PalleteColor.green50),
+                          )
+                        ],
+                      );
+                    }),
+                  ],
+                ),
               ),
             ),
             Expanded(
@@ -104,7 +105,12 @@ class AccountView extends GetView<AccountController> {
                         CardProfile(
                           label: 'Pengaturan Akun',
                           leftIcon: Icons.person,
-                          onTap: () {},
+                          onTap: () {
+                            if (controller.user.value != null) {
+                              Get.toNamed('/pengaturan-akun',
+                                  arguments: controller.user.value);
+                            }
+                          },
                         ),
                         SizedBox(
                           height: 15,
@@ -140,6 +146,7 @@ class AccountView extends GetView<AccountController> {
                           height: 15,
                         ),
                         ButtonCustom(
+                          height: 55,
                           name: 'Keluar',
                           leftIcon: Icons.logout,
                           color: PalleteColor.green550,

@@ -39,6 +39,7 @@ class AccountController extends GetxController {
       user.value = result;
       print("User loaded: ${user.value?.name}");
     } catch (e) {
+      print(e);
       print("Error fetching user: $e");
     }
   }

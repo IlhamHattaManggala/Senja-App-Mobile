@@ -1,6 +1,5 @@
 class ConfigUrl {
-  static const String baseUrl =
-      'https://9b4c-36-68-55-212.ngrok-free.app/api/users/v1';
+  static const String baseUrl = 'http://192.168.100.5:5000/api/users/v1';
   static const String loginUrl = '$baseUrl/login';
   static const String registerUrl = '$baseUrl/register';
   static const String lupaPasswordUrl = '$baseUrl/lupa-password';
@@ -10,4 +9,5 @@ class ConfigUrl {
   static const String notifikasiUrl = '$baseUrl/notifikasi';
   static const String gerakanUrl = '$baseUrl/gerakantari';
   static const String profileUrl = '$baseUrl/profile';
+  static const String UpdateProfileUrl = '$baseUrl/profile';
 }

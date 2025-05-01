@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:senja_mobile/app/config/pallete_color.dart';
+import 'package:senja_mobile/app/widgets/button_custom.dart';
 import '../controllers/gerakan_controller.dart';
 
 class GerakanView extends GetView<GerakanController> {
@@ -130,6 +131,15 @@ class GerakanView extends GetView<GerakanController> {
                       );
                     }),
                   ),
+                  ButtonCustom(
+                    name: "Monitoring",
+                    height: 55,
+                    color: PalleteColor.green550,
+                    textColor: PalleteColor.green50,
+                    onPressed: () {
+                      Get.offAllNamed('/gerakan');
+                    },
+                  )
                 ],
               ),
             ),

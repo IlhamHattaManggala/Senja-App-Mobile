@@ -1,15 +1,15 @@
 class User {
-  String id;
-  String name;
-  String email;
-  String role;
+  String? id;
+  String? name;
+  String? email;
+  String? role;
   String? avatar;
 
   User({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.role,
+    this.id,
+    this.name,
+    this.email,
+    this.role,
     this.avatar,
   });
 

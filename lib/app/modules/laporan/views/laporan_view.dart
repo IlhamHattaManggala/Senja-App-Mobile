@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:senja_mobile/app/config/pallete_color.dart';
 
 import '../controllers/laporan_controller.dart';
 
@@ -10,6 +11,7 @@ class LaporanView extends GetView<LaporanController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: PalleteColor.green50,
       appBar: AppBar(
         leading: const BackButton(color: Colors.white),
         title: const Text(
@@ -24,7 +26,7 @@ class LaporanView extends GetView<LaporanController> {
       ),
       body: SingleChildScrollView(
         child: Container(
-          color: const Color(0xFFF8F3E0), // Cream background
+          // Cream background
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +56,6 @@ class LaporanView extends GetView<LaporanController> {
                               color: Color(0xFF4A4A4A),
                             ),
                           ),
-                          _buildExportButton(),
                         ],
                       ),
                     ),
@@ -63,6 +64,7 @@ class LaporanView extends GetView<LaporanController> {
                       height: 200,
                       child: _buildBarChart(),
                     ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -296,7 +298,6 @@ class LaporanView extends GetView<LaporanController> {
         0: FlexColumnWidth(2.5), // Tanggal
         1: FlexColumnWidth(2), // Gerakan
         2: FlexColumnWidth(1.5), // Skor
-        3: FlexColumnWidth(1.5), // OV
       },
       children: [
         // Table Header
@@ -306,16 +307,11 @@ class LaporanView extends GetView<LaporanController> {
             _buildTableHeader('Tanggal'),
             _buildTableHeader('Gerakan'),
             _buildTableHeader('Skor'),
-            _buildTableHeader('OV'),
           ],
         ),
         // Table Rows - Dynamic Data
         ...controller.historiData.map((item) => _buildTableRow(
-              item['date'] ?? '',
-              item['gerakan'] ?? '',
-              item['score'] ?? '',
-              item['ov'] ?? '',
-            )),
+            item['date'] ?? '', item['gerakan'] ?? '', item['score'] ?? '')),
       ],
     );
   }
@@ -335,14 +331,12 @@ class LaporanView extends GetView<LaporanController> {
     );
   }
 
-  TableRow _buildTableRow(
-      String date, String gerakanName, String score, String ov) {
+  TableRow _buildTableRow(String date, String gerakanName, String score) {
     return TableRow(
       children: [
         _buildTableCell(date),
         _buildTableCell(gerakanName),
         _buildTableCell(score),
-        _buildTableCell(ov),
       ],
     );
   }

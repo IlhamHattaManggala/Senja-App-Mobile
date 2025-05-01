@@ -122,7 +122,7 @@ class HistoryView extends GetView<HistoryController> {
                                         MainAxisSize.min, // <-- Penting
                                     children: const [
                                       Text(
-                                        'Gerakan 1',
+                                        'Tari Topeng Endel',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,

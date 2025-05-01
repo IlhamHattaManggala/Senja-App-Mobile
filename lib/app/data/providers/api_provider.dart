@@ -205,4 +205,24 @@ class ApiProvider {
       throw Exception("Gagal mengambil data user");
     }
   }
+
+  Future<Map<String, dynamic>> updateUserProfile(
+      Map<String, dynamic> data) async {
+    final token = storage.getToken();
+    final url = Uri.parse(ConfigUrl.UpdateProfileUrl);
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update profile');
+    }
+  }
 }

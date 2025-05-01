@@ -24,22 +24,22 @@ class RiwayatView extends GetView<RiwayatController> {
         children: [
           SizedBox(height: 30),
           _buildGerakanItem(
-            'Gerakan 1',
-            'https://png.pngtree.com/png-clipart/20221227/original/pngtree-traditional-art-of-horse-jaranan-lumping-reog-dance-ponorogo-east-java-png-image_8811263.png',
+            'Tari Gambyong Mari Kangen',
+            'https://i.ytimg.com/vi/bxLlxz58vOw/maxresdefault.jpg',
             PalleteColor.green550,
             () => controller.onGerakanTapped(1),
           ),
           SizedBox(height: 15),
           _buildGerakanItem(
-            'Gerakan 2',
-            'https://png.pngtree.com/png-clipart/20221227/original/pngtree-traditional-art-of-horse-jaranan-lumping-reog-dance-ponorogo-east-java-png-image_8811263.png',
+            'Tari Topeng Endel',
+            'https://t-2.tstatic.net/tribunnewswiki/foto/bank/images/tari-endel-3.jpg',
             PalleteColor.green550,
             () => controller.onGerakanTapped(2),
           ),
           SizedBox(height: 15),
           _buildGerakanItem(
-            'Gerakan 3',
-            'https://png.pngtree.com/png-clipart/20221227/original/pngtree-traditional-art-of-horse-jaranan-lumping-reog-dance-ponorogo-east-java-png-image_8811263.png',
+            'Tari Guci',
+            'https://i.ytimg.com/vi/DYw6djwa64E/maxresdefault.jpg',
             PalleteColor.green550,
             () => controller.onGerakanTapped(3),
           ),
