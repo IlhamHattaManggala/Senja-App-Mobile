@@ -70,7 +70,9 @@ class PengaturanAkunView extends GetView<PengaturanAkunController> {
               color: PalleteColor.green550,
               textColor: PalleteColor.green50,
               height: 55,
-              onPressed: () {},
+              onPressed: () {
+                controller.updateProfile();
+              },
             ),
           ],
         ),

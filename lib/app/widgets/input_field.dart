@@ -33,6 +33,7 @@ class InputField extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           SizedBox(
+            height: 60,
             width: GetPlatform.isWeb ? 600 : double.infinity,
             child: TextField(
               controller: controller,

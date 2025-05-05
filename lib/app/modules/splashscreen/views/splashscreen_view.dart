@@ -63,7 +63,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
                             duration: const Duration(milliseconds: 700),
                             // ruang supaya animasi kelihatan
                             child: ButtonCustom(
-                              height: 60,
+                              height: 55,
                               name: 'Mulai',
                               rightIcon: Icons.arrow_forward,
                               onPressed: () => Get.toNamed('/overview'),

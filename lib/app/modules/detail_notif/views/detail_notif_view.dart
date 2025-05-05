@@ -26,7 +26,7 @@ class DetailNotifView extends GetView<DetailNotifController> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
-          color: PalleteColor.green100,
+          color: PalleteColor.green50,
           elevation: 3,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:senja_mobile/app/data/models/user.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
 
 class LoginController extends GetxController {
@@ -12,9 +13,14 @@ class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final storageKey = 'rememberMe';
+
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _autoLoginIfRemembered();
+    });
   }
 
   @override
@@ -27,6 +33,20 @@ class LoginController extends GetxController {
     emailController.dispose();
     passwordController.dispose();
     super.onClose();
+  }
+
+  void _autoLoginIfRemembered() {
+    bool? isLoggedIn = box.read('isLoggedIn');
+    var userData = box.read('user');
+
+    if (isLoggedIn == true && userData != null) {
+      final user = User.fromJson(userData);
+      if (user.role == 'admin') {
+        Get.offAllNamed('/admin');
+      } else {
+        Get.offAllNamed('/navbar');
+      }
+    }
   }
 
   Future<void> handleLogin() async {
@@ -44,9 +64,13 @@ class LoginController extends GetxController {
     isLoading.value = false;
 
     if (user != null) {
+      if (isChecked.value) {
+        box.write('isLoggedIn', true);
+        box.write('user', user.toJson()); // pastikan model User punya toJson()
+      }
       // Navigasi berdasarkan role
       if (user.role == 'admin') {
-        Get.offAllNamed('/admin'); // ganti sesuai route-mu
+        Get.offAllNamed('/navbar'); // ganti sesuai route-mu
       } else {
         Get.offAllNamed('/navbar'); // ganti sesuai route-mu
       }

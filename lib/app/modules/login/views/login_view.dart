@@ -62,20 +62,35 @@ class LoginView extends GetView<LoginController> {
                               controller: controller.passwordController,
                               isHidden: controller.isHiddenPass,
                             ),
-                            const SizedBox(height: 2),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton(
-                                onPressed: () {
-                                  Get.toNamed('/lupa-password');
-                                },
-                                child: Text(
-                                  'Lupa kata sandi?',
-                                  style: TextStyle(
-                                    color: PalleteColor.green500,
-                                    fontWeight: FontWeight.w500,
+                            Obx(
+                              () => Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        value: controller.isChecked.value,
+                                        onChanged: (value) => controller
+                                            .isChecked.value = value ?? false,
+                                        activeColor: PalleteColor.green500,
+                                      ),
+                                      const Text("Ingat saya"),
+                                    ],
                                   ),
-                                ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Get.toNamed('/lupa-password');
+                                    },
+                                    child: Text(
+                                      'Lupa kata sandi?',
+                                      style: TextStyle(
+                                        color: PalleteColor.green500,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(height: 20),

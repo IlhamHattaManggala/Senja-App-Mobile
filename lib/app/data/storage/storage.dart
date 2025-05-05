@@ -14,4 +14,16 @@ class Storage {
   Future<void> removeToken() async {
     await _box.remove('token');
   }
+
+  String? getApiKey() {
+    return _box.read('apikey');
+  }
+
+  Future<void> saveApiKey(String apikey) async {
+    await _box.write('apikey', apikey);
+  }
+
+  Future<void> removeApiKey() async {
+    await _box.remove('apikey');
+  }
 }

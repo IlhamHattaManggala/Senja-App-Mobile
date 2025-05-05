@@ -56,7 +56,7 @@ class PengaturanAkunController extends GetxController {
             passwordController.text.isEmpty ? null : passwordController.text,
       });
 
-      if (response['success'] == true) {
+      if (response['status'] == 'sukses') {
         Get.snackbar('Sukses', 'Profil berhasil diperbarui');
         // Update user lokal juga
         user.update((val) {

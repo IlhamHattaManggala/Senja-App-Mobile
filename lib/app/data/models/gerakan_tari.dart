@@ -1,35 +1,19 @@
 class GerakanTari {
-  int? id;
   String? name;
   String? imageUrl;
-  String? description;
-  double? skor; // ✅ Tambahkan skor
+  String? videoUrl;
+  String? skor;
 
-  GerakanTari({
-    this.id,
-    this.name,
-    this.imageUrl,
-    this.description,
-    this.skor, // ✅ Tambahkan ke constructor
-  });
+  GerakanTari({this.name, this.imageUrl, this.videoUrl, this.skor});
 
-  GerakanTari.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    imageUrl = json['imageUrl'];
-    description = json['description'];
-    skor = (json['skor'] != null)
-        ? double.tryParse(json['skor'].toString())
-        : null; // ✅ Parsing aman
+  factory GerakanTari.fromJson(Map<String, dynamic> json) {
+    return GerakanTari(
+        name: json['name'],
+        imageUrl: json['imageUrl'],
+        videoUrl: json['videoUrl'],
+        skor: json['skor']);
   }
 
-  Map<String, dynamic> toJson() {
-    final data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['imageUrl'] = imageUrl;
-    data['description'] = description;
-    data['skor'] = skor; // ✅ Tambahkan ke JSON
-    return data;
-  }
+  Map<String, dynamic> toJson() =>
+      {'name': name, 'imageUrl': imageUrl, 'videoUrl': videoUrl, 'skor': skor};
 }

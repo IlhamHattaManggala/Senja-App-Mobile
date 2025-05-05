@@ -14,7 +14,10 @@ class ApiProvider {
   Future<User?> login(String email, String password) async {
     final response = await http.post(
       Uri.parse(ConfigUrl.loginUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'senjawebdev-12',
+      },
       body: jsonEncode({"email": email, "password": password}),
     );
 
@@ -22,6 +25,7 @@ class ApiProvider {
       final body = json.decode(response.body);
       final data = body['data'];
       await storage.saveToken(data['token']);
+      await storage.saveApiKey('senjawebdev-12');
 
       // Gabungkan user dan token ke dalam satu map, lalu parse ke model
       final user = User.fromJson({
@@ -38,9 +42,10 @@ class ApiProvider {
   }
 
   Future<bool> register(String name, String email, String password) async {
+    final api = storage.getApiKey();
     final response = await http.post(
       Uri.parse(ConfigUrl.registerUrl),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'x-api-key': '$api'},
       body: jsonEncode({
         'name': name,
         'email': email,
@@ -60,12 +65,14 @@ class ApiProvider {
 
   Future<Map<String, dynamic>> fetchBeranda() async {
     final token = storage.getToken();
+    final api = storage.getApiKey();
 
     final response = await http.get(
       Uri.parse(ConfigUrl.berandaUrl),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
+        'x-api-key': '$api'
       },
     );
 
@@ -125,6 +132,7 @@ class ApiProvider {
 
   Future<List<Notifikasi>> fetchNotifikasi() async {
     final token = storage.getToken();
+    final api = storage.getApiKey();
     final url = Uri.parse(ConfigUrl.notifikasiUrl);
 
     final response = await http.get(
@@ -132,7 +140,8 @@ class ApiProvider {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': 'Bearer $token'
+        'Authorization': 'Bearer $token',
+        'x-api-key': '$api',
       },
     );
 
@@ -151,6 +160,7 @@ class ApiProvider {
 
   Future<void> markNotifAsRead(String id) async {
     final token = storage.getToken();
+    final api = storage.getApiKey();
     final url = Uri.parse("${ConfigUrl.notifikasiUrl}/$id/read");
 
     final response = await http.patch(
@@ -158,6 +168,7 @@ class ApiProvider {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        'x-api-key': '$api'
       },
     );
 
@@ -168,6 +179,7 @@ class ApiProvider {
 
   Future<void> deleteNotifFromBackend(String id) async {
     final token = storage.getToken();
+    final api = storage.getApiKey();
     final url = Uri.parse("${ConfigUrl.notifikasiUrl}/$id");
 
     final response = await http.delete(
@@ -175,6 +187,7 @@ class ApiProvider {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        'x-api-key': '$api',
       },
     );
 
@@ -185,6 +198,7 @@ class ApiProvider {
 
   Future<User?> fetchUser() async {
     final token = storage.getToken();
+    final api = storage.getApiKey();
     final url = Uri.parse(ConfigUrl.profileUrl);
 
     final response = await http.get(
@@ -192,6 +206,7 @@ class ApiProvider {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        'x-api-key': '$api',
       },
     );
     print("Response: ${response.body}");
@@ -209,12 +224,14 @@ class ApiProvider {
   Future<Map<String, dynamic>> updateUserProfile(
       Map<String, dynamic> data) async {
     final token = storage.getToken();
+    final api = storage.getApiKey();
     final url = Uri.parse(ConfigUrl.UpdateProfileUrl);
-    final response = await http.post(
+    final response = await http.put(
       url,
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
+        'x-api-key': '$api',
       },
       body: jsonEncode(data),
     );

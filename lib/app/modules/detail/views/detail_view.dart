@@ -166,7 +166,9 @@ class DetailView extends GetView<DetailController> {
   Widget _buildDetailItem(String name, String description, String imageUrl,
       {String? assetImage}) {
     return Card(
+      color: PalleteColor.green50,
       elevation: 3,
+      shadowColor: PalleteColor.green550.withOpacity(0.5),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -183,7 +185,7 @@ class DetailView extends GetView<DetailController> {
                   ? Image.network(
                       imageUrl,
                       width: 60,
-                      height: 60,
+                      height: 110,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
                           _buildItemAssetImage(assetImage),
@@ -225,7 +227,7 @@ class DetailView extends GetView<DetailController> {
                       fontWeight: FontWeight.bold,
                       color: PalleteColor.green700,
                     ),
-                    textAlign: TextAlign.justify,
+                    textAlign: TextAlign.left,
                   ),
                 ],
               ),
@@ -242,7 +244,7 @@ class DetailView extends GetView<DetailController> {
       return Image.asset(
         assetPath,
         width: 60,
-        height: 60,
+        height: 110,
         fit: BoxFit.cover,
         errorBuilder: (context, error, stackTrace) => _buildPlaceholderImage(),
       );
@@ -254,7 +256,7 @@ class DetailView extends GetView<DetailController> {
   Widget _buildPlaceholderImage() {
     return Container(
       width: 60,
-      height: 60,
+      height: 110,
       color: Colors.grey[300],
       child: const Icon(Icons.image_not_supported, size: 24),
     );

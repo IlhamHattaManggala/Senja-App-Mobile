@@ -1,5 +1,5 @@
 class ConfigUrl {
-  static const String baseUrl = 'http://192.168.100.5:5000/api/users/v1';
+  static const String baseUrl = 'http://192.168.18.161:5000/api/users/v1';
   static const String loginUrl = '$baseUrl/login';
   static const String registerUrl = '$baseUrl/register';
   static const String lupaPasswordUrl = '$baseUrl/lupa-password';
