@@ -97,7 +97,11 @@ class GerakanView extends GetView<GerakanController> {
                             ),
                             child: ListTile(
                               onTap: () {
-                                Get.toNamed('/monitoring', arguments: gerakan);
+                                Get.toNamed('/monitoring', arguments: {
+                                  'tariName': tari.name ?? '',
+                                  'gerakanName': gerakan.name ?? '',
+                                  'gerakanVideoUrl': gerakan.videoUrl ?? '',
+                                });
                               },
                               leading: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),

@@ -22,57 +22,75 @@ class MonitoringView extends GetView<MonitoringController> {
           onPressed: () => Get.back(),
         ),
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Obx(() {
-            if (controller.isCameraInitialized.value &&
-                controller.cameraController != null) {
-              return Positioned.fill(
-                child: CameraPreview(controller.cameraController!),
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          }),
-          Positioned(
-            top: 20,
-            right: 20,
+          // Baris atas: video di kiri, teks info di kanan
+          Container(
+            color: PalleteColor.green550,
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Video di kiri
+                Obx(() {
+                  if (controller.isVideoInitialized.value) {
+                    return SizedBox(
+                      width: 200,
+                      height: 150,
+                      child: Chewie(controller: controller.chewieController),
+                    );
+                  } else {
+                    return const SizedBox(width: 200, height: 150);
+                  }
+                }),
+
+                const SizedBox(width: 16),
+
+                // Teks di kanan
+                Expanded(
+                  child: Obx(() => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Prediksi: ${controller.predictedLabel.value}',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 18),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Akurasi: ${controller.accuracy.value.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                          Text(
+                            'Presisi: ${controller.precision.value.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                          Text(
+                            'Skor: ${controller.score.value.toStringAsFixed(2)}%',
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      )),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 8),
+
+          // Kamera di bawah
+          Expanded(
             child: Obx(() {
-              if (controller.isVideoInitialized.value) {
-                return SizedBox(
-                  width: 200, // sesuaikan ukuran
-                  height: 150,
-                  child: Chewie(controller: controller.chewieController),
-                );
+              if (controller.isCameraInitialized.value &&
+                  controller.cameraController != null) {
+                return CameraPreview(controller.cameraController!);
               } else {
-                return const SizedBox(); // atau loading spinner
+                return const Center(child: CircularProgressIndicator());
               }
             }),
-          ),
-          // Tambahkan teks untuk akurasi, presisi, dan skor di kiri bawah
-          Positioned(
-            bottom: 20, // Posisi dari bawah
-            left: 20, // Posisi dari kiri
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Akurasi: ', // Contoh nilai akurasi
-                    style: TextStyle(color: PalleteColor.green50, fontSize: 16),
-                  ),
-                  Text(
-                    'Presisi: ', // Contoh nilai presisi
-                    style: TextStyle(color: PalleteColor.green50, fontSize: 16),
-                  ),
-                  Text(
-                    'Skor: ', // Contoh nilai skor
-                    style: TextStyle(color: PalleteColor.green50, fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),

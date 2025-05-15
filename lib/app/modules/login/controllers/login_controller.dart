@@ -38,13 +38,23 @@ class LoginController extends GetxController {
   void _autoLoginIfRemembered() {
     bool? isLoggedIn = box.read('isLoggedIn');
     var userData = box.read('user');
+    String? expiredAtStr = box.read('tokenExpiredAt');
 
-    if (isLoggedIn == true && userData != null) {
-      final user = User.fromJson(userData);
-      if (user.role == 'admin') {
-        Get.offAllNamed('/admin');
+    if (isLoggedIn == true && userData != null && expiredAtStr != null) {
+      DateTime expiredAt = DateTime.parse(expiredAtStr);
+      if (DateTime.now().isBefore(expiredAt)) {
+        final user = User.fromJson(userData);
+        if (user.role == 'admin') {
+          Get.offAllNamed('/admin');
+        } else {
+          Get.offAllNamed('/navbar');
+        }
       } else {
-        Get.offAllNamed('/navbar');
+        // Token expired: hapus data login
+        box.remove('isLoggedIn');
+        box.remove('user');
+        box.remove('token');
+        box.remove('tokenExpiredAt');
       }
     }
   }
@@ -66,7 +76,12 @@ class LoginController extends GetxController {
     if (user != null) {
       if (isChecked.value) {
         box.write('isLoggedIn', true);
-        box.write('user', user.toJson()); // pastikan model User punya toJson()
+        box.write('user', user.toJson());
+        box.write(
+            'tokenExpiredAt',
+            DateTime.now()
+                .add(Duration(hours: 24))
+                .toIso8601String()); // pastikan model User punya toJson()
       }
       // Navigasi berdasarkan role
       if (user.role == 'admin') {
