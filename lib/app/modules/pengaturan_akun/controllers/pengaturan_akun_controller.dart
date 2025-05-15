@@ -4,7 +4,6 @@ import 'package:senja_mobile/app/data/models/user.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
 
 class PengaturanAkunController extends GetxController {
-  //TODO: Implement PengaturanAkunController
   final api = Get.find<ApiProvider>();
   final nameController = TextEditingController();
   final emailController = TextEditingController();

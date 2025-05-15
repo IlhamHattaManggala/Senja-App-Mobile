@@ -2,7 +2,6 @@ import 'package:get/get.dart';
 import 'package:senja_mobile/app/data/models/notifikasi.dart';
 
 class DetailNotifController extends GetxController {
-  //TODO: Implement DetailNotifController
   late Notifikasi notif;
 
   final count = 0.obs;

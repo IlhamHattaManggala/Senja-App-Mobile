@@ -26,11 +26,7 @@ class RiwayatController extends GetxController {
     // Bersihkan resources jika diperlukan
   }
 
-  // Method untuk memuat data gerakan dari API atau sumber data lainnya
-  void _loadGerakanData() {
-    // TODO: Implementasikan logika untuk memuat data gerakan
-    // Contoh: memanggil API service untuk mendapatkan data gerakan tari
-  }
+  void _loadGerakanData() {}
   void onGerakanTapped(int gerakanId) {
     // Navigate to Laporan page with default values if data is null
     Get.toNamed('/laporan', arguments: {
@@ -64,7 +60,6 @@ class RiwayatController extends GetxController {
 
   // Method untuk mendapatkan info gerakan berdasarkan ID
   Map<String, dynamic> getGerakanInfo(int gerakanId) {
-    // TODO: Implementasikan logika untuk mendapatkan info gerakan
     // Ini adalah contoh mock data
     return {
       'id': gerakanId,
@@ -77,7 +72,6 @@ class RiwayatController extends GetxController {
 
   // Method untuk menandai gerakan sebagai selesai dipelajari
   void markGerakanAsCompleted(int gerakanId) {
-    // TODO: Implementasikan logika untuk menandai gerakan sebagai selesai
     print('Gerakan $gerakanId ditandai sebagai selesai');
     // Mungkin perlu update ke API atau database lokal
   }

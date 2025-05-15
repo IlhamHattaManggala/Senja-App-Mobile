@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
 
 class VerifikasiController extends GetxController {
-  //TODO: Implement VerifikasiController
   final pinController = TextEditingController();
   final isLoading = false.obs;
   final api = Get.find<ApiProvider>();

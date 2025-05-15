@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
 
 class LupaPasswordController extends GetxController {
-  //TODO: Implement LupaPasswordController
   final api = Get.find<ApiProvider>();
   final emailController = TextEditingController();
   final isLoading = false.obs;

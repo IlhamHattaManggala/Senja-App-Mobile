@@ -3,7 +3,6 @@ import 'package:senja_mobile/app/data/models/gerakan_tari.dart';
 import 'package:senja_mobile/app/data/models/tari.dart';
 
 class GerakanController extends GetxController {
-  //TODO: Implement GerakanController
   late Tari tari;
   final RxList<GerakanTari> gerakanList = <GerakanTari>[].obs;
   final isLoading = false.obs;
