@@ -89,7 +89,7 @@ class VerifikasiView extends GetView<VerifikasiController> {
                               "Textfield tidak boleh kosong",
                             );
                           } else {
-                            Get.toNamed('/reset-password');
+                            controller.kirimVerifikasiPin();
                           }
                         },
                         style: ElevatedButton.styleFrom(

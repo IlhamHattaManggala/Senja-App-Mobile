@@ -1,11 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
+import 'package:senja_mobile/app/data/storage/storage.dart';
 
 class VerifikasiController extends GetxController {
   final pinController = TextEditingController();
   final isLoading = false.obs;
   final api = Get.find<ApiProvider>();
+  final box = Get.find<Storage>();
   @override
   void onInit() {
     super.onInit();
@@ -35,7 +37,10 @@ class VerifikasiController extends GetxController {
       final success = await api.verifikasiPin(pin);
       if (success) {
         Get.snackbar("Berhasil", "PIN berhasil diverifikasi");
-        Get.offAllNamed('/reset-password');
+        pinController.clear();
+        Get.offAllNamed('/reset-password', arguments: {
+          'pin': pin,
+        });
       }
     } catch (e) {
       Get.snackbar("Gagal", e.toString());

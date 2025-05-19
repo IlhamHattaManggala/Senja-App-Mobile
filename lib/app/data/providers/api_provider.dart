@@ -101,14 +101,24 @@ class ApiProvider {
     try {
       final response = await http.post(
         url,
-        body: {'email': email},
+        body: jsonEncode({'email': email}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'x-api-key': 'senjawebdev-12',
+        },
       );
 
-      final data = json.decode(response.body);
-      if (response.statusCode == 200 && data['success'] == true) {
-        return true;
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          await storage.saveApiKey('senjawebdev-12');
+          return true;
+        } else {
+          throw data['message'] ?? 'Gagal mengirim permintaan reset password.';
+        }
       } else {
-        throw data['message'] ?? 'Gagal mengirim permintaan reset password.';
+        throw 'Gagal: ${response.statusCode} - ${response.body}';
       }
     } catch (e) {
       rethrow;
@@ -116,10 +126,11 @@ class ApiProvider {
   }
 
   Future<bool> verifikasiPin(String pin) async {
+    final api = storage.getApiKey();
     final response = await http.post(
       Uri.parse(ConfigUrl.verifikasiPinUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'pin': pin}),
+      headers: {'Content-Type': 'application/json', 'x-api-key': '$api'},
+      body: jsonEncode({'otp': pin}),
     );
 
     if (response.statusCode == 200) {
@@ -127,6 +138,27 @@ class ApiProvider {
     } else {
       throw Exception(
           jsonDecode(response.body)['message'] ?? 'Verifikasi gagal');
+    }
+  }
+
+  Future<bool> resetPassword(String password, String pin) async {
+    final api = storage.getApiKey();
+    final url = Uri.parse(ConfigUrl.resetPasswordUrl);
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'x-api-key': '$api'
+      },
+      body: jsonEncode({'otp': pin, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Gagal mengubah password');
     }
   }
 

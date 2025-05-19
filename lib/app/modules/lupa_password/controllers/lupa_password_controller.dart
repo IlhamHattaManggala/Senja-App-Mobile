@@ -38,7 +38,7 @@ class LupaPasswordController extends GetxController {
         Get.snackbar(
             "Berhasil", "Link reset kata sandi telah dikirim ke email kamu");
         emailController.clear();
-        Get.toNamed('/verify-pin');
+        Get.toNamed('/verifikasi');
       }
     } catch (e) {
       Get.snackbar("Gagal", e.toString());

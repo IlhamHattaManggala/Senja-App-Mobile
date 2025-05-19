@@ -64,9 +64,7 @@ class LupaPasswordView extends GetView<LupaPasswordController> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed('/verifikasi');
-                  },
+                  onPressed: controller.kirimPermintaanReset,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: PalleteColor.green550,
                     foregroundColor: PalleteColor.green50,
