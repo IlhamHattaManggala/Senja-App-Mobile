@@ -32,7 +32,6 @@ class RiwayatController extends GetxController {
     Get.toNamed('/laporan', arguments: {
       'tariName': tariName,
     });
-    print('$tariName telah dipilih');
   }
 
   Map<String, dynamic> getGerakanInfo(int gerakanId) {
@@ -47,7 +46,5 @@ class RiwayatController extends GetxController {
   }
 
   // Method untuk menandai gerakan sebagai selesai dipelajari
-  void markGerakanAsCompleted(int gerakanId) {
-    print('Gerakan $gerakanId ditandai sebagai selesai');
-  }
+  void markGerakanAsCompleted(int gerakanId) {}
 }

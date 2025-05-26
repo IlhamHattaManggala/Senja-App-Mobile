@@ -73,12 +73,18 @@ class PengaturanAkunController extends GetxController {
         user.value = User.fromJson(response['data']);
         update();
         final accountController = Get.find<AccountController>();
-        accountController.getUser();
+        await accountController.getUser();
       } else {
         Get.snackbar('Gagal', response['pesan'] ?? 'Gagal memperbarui profil');
       }
     } catch (e) {
       Get.snackbar('Error', 'Terjadi kesalahan: $e');
     }
+  }
+
+  @override
+  Future<void> refresh() async {
+    final accountController = Get.find<AccountController>();
+    await accountController.getUser();
   }
 }

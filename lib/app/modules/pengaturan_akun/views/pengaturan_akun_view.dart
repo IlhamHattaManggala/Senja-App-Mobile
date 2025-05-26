@@ -17,6 +17,13 @@ class PengaturanAkunView extends GetView<PengaturanAkunController> {
       backgroundColor: PalleteColor.green50,
       appBar: AppBar(
         backgroundColor: PalleteColor.green550,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            controller.refresh();
+            Get.back(); // atau Navigator.pop(context)
+          },
+        ),
         title: const Text(
           'Pengaturan Akun',
           style: TextStyle(

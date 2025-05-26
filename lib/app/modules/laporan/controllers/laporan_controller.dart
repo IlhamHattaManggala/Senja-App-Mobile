@@ -91,16 +91,13 @@ class LaporanController extends GetxController {
     try {
       isLoading(true);
       final result = await api.fetchRiwayat();
-      debugPrint('Riwayat fetched: $result');
 
       // Simpan semua data
       riwayatList.assignAll(result!);
-      debugPrint('Riwayat List: ${riwayatList.toString()}');
       if (result.isEmpty) {
-        print('❌ Tidak ada data riwayat untuk ${tariName.value}');
+        debugPrint('❌ Tidak ada data riwayat untuk ${tariName.value}');
         return;
       }
-      print('✅ Riwayat untuk ${tariName.value} berhasil diambil');
 
       // Filter berdasarkan tariName
       final filtered =
@@ -110,9 +107,7 @@ class LaporanController extends GetxController {
           'date': formatTanggal(e['date']), // ubah format tanggal
         };
       }).toList();
-      debugPrint('Formatted Date: ${formatTanggal(result[0]['date'])}');
       historiData.assignAll(filtered);
-      debugPrint(historiData.toString());
       scoreData.assignAll(filtered
           .map((e) => {
                 'gerakan_name': e['gerakan_name'] ?? e['gerakanName'] ?? '-',

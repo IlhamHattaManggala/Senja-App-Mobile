@@ -37,9 +37,8 @@ class AccountController extends GetxController {
     try {
       final result = await api.fetchUser();
       user.value = result;
-      print("User loaded: ${user.value?.name}");
+      update();
     } catch (e) {
-      print(e);
       print("Error fetching user: $e");
     }
   }

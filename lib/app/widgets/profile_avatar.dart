@@ -21,7 +21,8 @@ class ProfileAvatar extends StatelessWidget {
           backgroundColor: Colors.white,
           child: CircleAvatar(
             radius: 42,
-            backgroundImage: CachedNetworkImageProvider(imageUrl),
+            backgroundImage: CachedNetworkImageProvider(
+                '$imageUrl?${DateTime.now().millisecondsSinceEpoch}'),
           ),
         ),
       ],
