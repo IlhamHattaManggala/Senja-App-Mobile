@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:chewie/chewie.dart';
+import 'package:senja_mobile/app/data/providers/api_provider.dart';
 import 'package:senja_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:video_player/video_player.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
@@ -35,6 +37,14 @@ class MonitoringController extends GetxController {
   late String gerakanName;
   late Interpreter? interpreter;
   List<String> labels = [];
+  final List<String> predictedLabelsPerSecond = [];
+  int frameCounter = 0;
+  final isTraining = false.obs;
+  final remainingTime = 60.obs; // 3 menit dalam detik
+  Timer? trainingTimer;
+
+  DateTime? latihanStartTime;
+  final api = Get.find<ApiProvider>();
 
   @override
   void onInit() {
@@ -61,6 +71,7 @@ class MonitoringController extends GetxController {
     videoController.dispose();
     chewieController.dispose();
     interpreter?.close(); // ✅ penting
+    trainingTimer?.cancel();
     super.onClose();
   }
 
@@ -209,20 +220,44 @@ class MonitoringController extends GetxController {
             final prediction = labels.isNotEmpty && maxIndex < labels.length
                 ? labels[maxIndex]
                 : 'Gerakan ${maxIndex + 1}';
-            predictedLabel.value = prediction;
 
-            totalPredictions++;
-            if (prediction.toLowerCase() == gerakanName.toLowerCase()) {
-              correctPredictions++;
+            // 👉 Simpan prediksi ke list dan hitung frame
+            predictedLabelsPerSecond.add(prediction);
+            frameCounter++;
+
+            if (frameCounter >= 30) {
+              // Hitung label yang paling sering muncul
+              final counts = <String, int>{};
+              for (var label in predictedLabelsPerSecond) {
+                counts[label] = (counts[label] ?? 0) + 1;
+              }
+              final mostFrequentLabel = counts.entries
+                  .reduce((a, b) => a.value > b.value ? a : b)
+                  .key;
+
+              predictedLabel.value = mostFrequentLabel;
+
+              // Hitung skor
+              totalPredictions++;
+              if (mostFrequentLabel.toLowerCase() ==
+                  gerakanName.toLowerCase()) {
+                correctPredictions++;
+              }
+
+              final currentScore =
+                  (correctPredictions / totalPredictions) * 100;
+              score.value = double.parse(currentScore.toStringAsFixed(2));
+              accuracy.value = correctPredictions / totalPredictions;
+              final predictedCorrect =
+                  (mostFrequentLabel.toLowerCase() == gerakanName.toLowerCase())
+                      ? 1
+                      : 0;
+              precision.value = predictedCorrect / totalPredictions;
+
+              // Reset
+              predictedLabelsPerSecond.clear();
+              frameCounter = 0;
             }
-
-            final currentScore = (correctPredictions / totalPredictions) * 100;
-            score.value = double.parse(currentScore.toStringAsFixed(2));
-
-            accuracy.value = correctPredictions / totalPredictions;
-            final predictedCorrect =
-                (prediction.toLowerCase() == gerakanName.toLowerCase()) ? 1 : 0;
-            precision.value = predictedCorrect / totalPredictions;
           }
         }
       }
@@ -230,6 +265,47 @@ class MonitoringController extends GetxController {
       print("❌ Pose detection error: $e");
     } finally {
       isDetecting = false;
+    }
+  }
+
+  void startTraining() {
+    isTraining.value = true;
+    remainingTime.value = 60;
+    totalPredictions = 0;
+    correctPredictions = 0;
+    score.value = 0.0;
+    accuracy.value = 0.0;
+    precision.value = 0.0;
+    predictedLabel.value = '';
+    predictedLabelsPerSecond.clear();
+    latihanStartTime = DateTime.now();
+
+    trainingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      remainingTime.value--;
+      if (remainingTime.value <= 0) {
+        timer.cancel();
+        isTraining.value = false;
+        stopTrainingAndSendResult();
+      }
+    });
+  }
+
+  void stopTrainingAndSendResult() async {
+    final averageScore = score.value;
+
+    final success = await api.kirimHasilLatihan(
+      tariName: Get.arguments['tariName'],
+      gerakanName: gerakanName,
+      date: latihanStartTime?.toIso8601String() ??
+          DateTime.now().toIso8601String(),
+      score: averageScore,
+    );
+
+    if (success) {
+      // jika ingin tampilkan snackbar atau navigasi
+      Get.snackbar("Sukses", "Data latihan telah dikirim ke server.");
+    } else {
+      Get.snackbar("Gagal", "Gagal mengirim data ke server.");
     }
   }
 }

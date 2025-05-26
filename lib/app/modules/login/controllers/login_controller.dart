@@ -7,6 +7,7 @@ import 'package:senja_mobile/app/data/providers/api_provider.dart';
 class LoginController extends GetxController {
   var isChecked = false.obs;
   var isLoading = false.obs;
+  var isLoadingGoogle = false.obs;
   var isHiddenPass = true.obs;
   final box = GetStorage();
   final api = Get.find<ApiProvider>();
@@ -76,7 +77,7 @@ class LoginController extends GetxController {
     if (user != null) {
       if (isChecked.value) {
         box.write('isLoggedIn', true);
-        box.write('user', user.toJson());
+        box.write('user', user);
         box.write(
             'tokenExpiredAt',
             DateTime.now()
@@ -93,6 +94,41 @@ class LoginController extends GetxController {
       Get.snackbar("Login Berhasil", "Selamat datang, ${user.name}");
     } else {
       Get.snackbar("Login Gagal", "Email atau password salah");
+    }
+  }
+
+  Future<void> loginWithGoogle() async {
+    try {
+      isLoadingGoogle.value = true;
+
+      final user = await api.loginGoogle();
+      isLoadingGoogle.value = false;
+
+      if (user != null) {
+        if (isChecked.value) {
+          box.write('isLoggedIn', true);
+          box.write('user', user.toJson()); // ✅ pastikan pakai `toJson()`
+          box.write(
+            'tokenExpiredAt',
+            DateTime.now().add(Duration(hours: 24)).toIso8601String(),
+          );
+        }
+
+        // Navigasi berdasarkan role
+        if (user.role == 'admin') {
+          Get.offAllNamed('/navbar');
+        } else {
+          Get.offAllNamed('/navbar');
+        }
+
+        Get.snackbar("Login Berhasil", "Selamat datang, ${user.name}");
+      } else {
+        Get.snackbar("Login Gagal", "Login Google gagal.");
+      }
+    } catch (e) {
+      isLoadingGoogle.value = false;
+      Get.snackbar("Error", "Terjadi kesalahan saat login Google");
+      print("Login Google error: $e");
     }
   }
 }

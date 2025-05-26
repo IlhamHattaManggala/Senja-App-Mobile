@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:senja_mobile/app/data/providers/api_provider.dart';
+import 'package:senja_mobile/app/data/storage/storage.dart';
 
 class LaporanController extends GetxController {
   // Observable variables
   final tariName = 'Default'.obs;
   final historiData = <Map<String, dynamic>>[].obs;
   final scoreData = <Map<String, dynamic>>[].obs;
+  final isLoading = false.obs;
+  final storage = Get.find<Storage>();
+  final api = Get.find<ApiProvider>();
+  final selectedChartType = 'bar'.obs;
+  final riwayatList = <Map<String, dynamic>>[].obs;
 
   @override
   void onInit() {
@@ -17,87 +24,34 @@ class LaporanController extends GetxController {
         tariName.value = args['tariName'];
       }
     }
-
-    // Initialize with placeholder data if none exists
-    loadData();
+    fetchRiwayat();
   }
 
-  void loadData() {
-    try {
-      // Attempt to load real data from your data source
-      // If this fails or returns null, we'll use the default data below
+  String formatTanggal(String tanggal) {
+    final dateTime = DateTime.parse(tanggal);
+    final bulanIndo = [
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember'
+    ];
 
-      // If no real data available, use placeholder data
-      if (scoreData.isEmpty) {
-        scoreData.value = [
-          {'day': 'Sen', 'score': 50},
-          {'day': 'Sel', 'score': 78},
-          {'day': 'Rab', 'score': 58},
-          {'day': 'Kam', 'score': 82},
-          {'day': 'Jum', 'score': 65},
-          {'day': 'Sab', 'score': 85},
-          {'day': 'Min', 'score': 70},
-          {'day': 'Sat', 'score': 92},
-        ];
-      }
+    final hari = dateTime.day.toString().padLeft(2, '0');
+    final bulan = bulanIndo[dateTime.month - 1];
+    final tahun = dateTime.year;
 
-      // Populate history data with placeholder data if empty
-      if (historiData.isEmpty) {
-        historiData.value = [
-          {
-            'date': '1 Jan 2023',
-            'gerakan': 'Gerakan 1',
-            'score': '80',
-            'ov': '70'
-          },
-          {
-            'date': '2 Jan 2023',
-            'gerakan': 'Gerakan 1',
-            'score': '75',
-            'ov': '80'
-          },
-          {
-            'date': '3 Jan 2023',
-            'gerakan': 'Gerakan 1',
-            'score': '90',
-            'ov': '95'
-          },
-          {
-            'date': '4 Jan 2023',
-            'gerakan': 'Gerakan 1',
-            'score': '65',
-            'ov': '70'
-          },
-          {
-            'date': '5 Jan 2023',
-            'gerakan': 'Gerakan 1',
-            'score': '60',
-            'ov': '65'
-          },
-        ];
-      }
-    } catch (e) {
-      // Handle any exceptions by ensuring we have default data
-      print('Error loading data: $e');
-      scoreData.value = [
-        {'day': 'Sen', 'score': 50},
-        {'day': 'Sel', 'score': 78},
-        {'day': 'Rab', 'score': 58},
-        {'day': 'Kam', 'score': 82},
-        {'day': 'Jum', 'score': 65},
-        {'day': 'Sab', 'score': 85},
-        {'day': 'Min', 'score': 70},
-        {'day': 'Sat', 'score': 92},
-      ];
+    final jam = dateTime.hour.toString().padLeft(2, '0');
+    final menit = dateTime.minute.toString().padLeft(2, '0');
 
-      historiData.value = [
-        {'date': '1 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '80'},
-        {'date': '2 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '75'},
-        {'date': '3 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '90'},
-        {'date': '4 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '65'},
-        {'date': '5 Jan 2023', 'gerakan': 'Gerakan 1', 'score': '60'},
-      ];
-    }
+    return '$hari $bulan $tahun, $jam:$menit';
   }
 
   void exportData() {
@@ -131,5 +85,46 @@ class LaporanController extends GetxController {
       print('Error getting score for day $dayIndex: $e');
     }
     return 0.0; // Default value if data not available
+  }
+
+  void fetchRiwayat() async {
+    try {
+      isLoading(true);
+      final result = await api.fetchRiwayat();
+      debugPrint('Riwayat fetched: $result');
+
+      // Simpan semua data
+      riwayatList.assignAll(result!);
+      debugPrint('Riwayat List: ${riwayatList.toString()}');
+      if (result.isEmpty) {
+        print('❌ Tidak ada data riwayat untuk ${tariName.value}');
+        return;
+      }
+      print('✅ Riwayat untuk ${tariName.value} berhasil diambil');
+
+      // Filter berdasarkan tariName
+      final filtered =
+          result.where((e) => e['tari_name'] == tariName.value).map((e) {
+        return {
+          ...e,
+          'date': formatTanggal(e['date']), // ubah format tanggal
+        };
+      }).toList();
+      debugPrint('Formatted Date: ${formatTanggal(result[0]['date'])}');
+      historiData.assignAll(filtered);
+      debugPrint(historiData.toString());
+      scoreData.assignAll(filtered
+          .map((e) => {
+                'gerakan_name': e['gerakan_name'] ?? e['gerakanName'] ?? '-',
+                'score': double.tryParse(e['score'].toString()) ?? 0.0,
+              })
+          .toList());
+
+      print('✅ Riwayat untuk ${tariName.value} berhasil dimuat');
+    } catch (e) {
+      print('❌ Error saat mengambil riwayat: $e');
+    } finally {
+      isLoading(false);
+    }
   }
 }

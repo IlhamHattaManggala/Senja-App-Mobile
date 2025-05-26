@@ -3,13 +3,14 @@ import 'package:senja_mobile/app/config/pallete_color.dart';
 
 class ButtonCustom extends StatelessWidget {
   final String name;
-  final IconData? leftIcon;
-  final IconData? rightIcon;
+  final Widget? leftIcon;
+  final Widget? rightIcon;
   final VoidCallback? onPressed;
   final Color? color;
   final Color? borderColor;
   final Color? textColor;
   final double? height;
+  final Widget? child;
 
   const ButtonCustom({
     super.key,
@@ -21,6 +22,7 @@ class ButtonCustom extends StatelessWidget {
     this.borderColor,
     this.textColor,
     this.height,
+    this.child,
   });
 
   @override
@@ -41,29 +43,30 @@ class ButtonCustom extends StatelessWidget {
             ),
           ),
           onPressed: onPressed,
-          child: Row(
-            mainAxisAlignment: (leftIcon != null && rightIcon != null)
-                ? MainAxisAlignment.spaceBetween
-                : MainAxisAlignment.center,
-            children: [
-              if (leftIcon != null) ...[
-                Icon(leftIcon, color: textColor ?? PalleteColor.green900),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                name,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: textColor ?? PalleteColor.green900,
-                ),
+          child: child ??
+              Row(
+                mainAxisAlignment: (leftIcon != null && rightIcon != null)
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.center,
+                children: [
+                  if (leftIcon != null) ...[
+                    leftIcon!,
+                    const SizedBox(width: 8),
+                  ],
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: textColor ?? PalleteColor.green900,
+                    ),
+                  ),
+                  if (rightIcon != null) ...[
+                    const SizedBox(width: 8),
+                    rightIcon!,
+                  ],
+                ],
               ),
-              if (rightIcon != null) ...[
-                const SizedBox(width: 8),
-                Icon(rightIcon, color: textColor ?? PalleteColor.green900),
-              ],
-            ],
-          ),
         ),
       ),
     );

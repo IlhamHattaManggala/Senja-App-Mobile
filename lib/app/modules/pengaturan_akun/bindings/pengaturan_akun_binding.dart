@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
 import 'package:senja_mobile/app/data/storage/storage.dart';
+import 'package:senja_mobile/app/modules/account/controllers/account_controller.dart';
 
 import '../controllers/pengaturan_akun_controller.dart';
 
@@ -12,5 +13,6 @@ class PengaturanAkunBinding extends Bindings {
     );
     Get.lazyPut(() => Storage());
     Get.lazyPut(() => ApiProvider());
+    Get.lazyPut(() => AccountController());
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -31,17 +33,24 @@ class PengaturanAkunView extends GetView<PengaturanAkunController> {
           children: [
             GestureDetector(
               onTap: () {
-                // Nanti tambahkan fungsi untuk pilih foto
+                controller.pickImage();
               },
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: controller.user.value?.avatar != null
-                    ? NetworkImage(controller.user.value?.avatar ?? "")
-                    : null,
-                child: controller.user.value?.avatar == null
-                    ? const Icon(Icons.person, size: 50)
-                    : null,
-              ),
+              child: Obx(() {
+                final avatarUrl = controller.user.value?.avatar;
+                final localImage = controller.pickedImage;
+
+                return CircleAvatar(
+                  radius: 50,
+                  backgroundImage: localImage != null
+                      ? FileImage(File(localImage.path))
+                      : (avatarUrl != null
+                          ? NetworkImage(avatarUrl) as ImageProvider
+                          : null),
+                  child: localImage == null && avatarUrl == null
+                      ? const Icon(Icons.person, size: 50)
+                      : null,
+                );
+              }),
             ),
             const SizedBox(height: 16),
             InputField(

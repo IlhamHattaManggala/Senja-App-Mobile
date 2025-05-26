@@ -20,100 +20,99 @@ class RiwayatView extends GetView<RiwayatController> {
         centerTitle: true,
         backgroundColor: PalleteColor.green550,
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 30),
-          _buildGerakanItem(
-            'Tari Gambyong Mari Kangen',
-            'https://i.ytimg.com/vi/bxLlxz58vOw/maxresdefault.jpg',
-            PalleteColor.green550,
-            () => controller.onGerakanTapped(1),
-          ),
-          SizedBox(height: 15),
-          _buildGerakanItem(
-            'Tari Topeng Endel',
-            'https://t-2.tstatic.net/tribunnewswiki/foto/bank/images/tari-endel-3.jpg',
-            PalleteColor.green550,
-            () => controller.onGerakanTapped(2),
-          ),
-          SizedBox(height: 15),
-          _buildGerakanItem(
-            'Tari Guci',
-            'https://i.ytimg.com/vi/DYw6djwa64E/maxresdefault.jpg',
-            PalleteColor.green550,
-            () => controller.onGerakanTapped(3),
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Baris atas: 2 card
+            Row(
+              children: [
+                Expanded(
+                  child: _buildCard(
+                    'Tari Gambyong Mari Kangen',
+                    'https://i.ytimg.com/vi/bxLlxz58vOw/maxresdefault.jpg',
+                    () => controller.onGerakanTapped('Tari Gambyong'),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildCard(
+                    'Tari Topeng Endel',
+                    'https://t-2.tstatic.net/tribunnewswiki/foto/bank/images/tari-endel-3.jpg',
+                    () => controller.onGerakanTapped('Tari Topeng Endel'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Baris bawah: 1 card lebar
+            _buildCard(
+              'Tari Guci',
+              'https://i.ytimg.com/vi/DYw6djwa64E/maxresdefault.jpg',
+              () => controller.onGerakanTapped('Tari Guci'),
+              isFullWidth: true,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildGerakanItem(
-      String title, String imageUrl, Color accentColor, VoidCallback onTap) {
+  Widget _buildCard(String title, String imageUrl, VoidCallback onTap,
+      {bool isFullWidth = false}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
+        height: MediaQuery.of(Get.context!).size.height * 0.26,
+        margin: isFullWidth
+            ? const EdgeInsets.symmetric(horizontal: 4)
+            : const EdgeInsets.all(0),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: PalleteColor.green50, // Light olive/beige color
-          borderRadius: BorderRadius.circular(12),
+          color: PalleteColor.green50,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4), // Warna shadow
+              color: Colors.black.withOpacity(0.15),
               spreadRadius: 2,
-              blurRadius: 6,
-              offset: const Offset(0, 3), // Posisi shadow: (x, y)
+              blurRadius: 5,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
-        child: ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          leading: SizedBox(
-            width: 50,
-            height: 50,
-            child: CachedNetworkImage(
-              imageUrl: imageUrl,
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) {
-                // If image not found, create a custom dance figure with music note
-                return Stack(
-                  children: [
-                    const Icon(Icons.music_note,
-                        color: Colors.purple, size: 16),
-                    Positioned(
-                      top: 5,
-                      left: 5,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: accentColor, width: 1),
-                        ),
-                        child: const Icon(Icons.person, color: Colors.indigo),
-                      ),
-                    ),
-                  ],
-                );
-              },
-              fit: BoxFit.cover,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
-          ),
-          title: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+            const SizedBox(height: 10),
+            Text(
+              title,
+              maxLines: 1,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          subtitle: const Text(
-            'Lihat selengkapnya',
-            style: TextStyle(
-              color: Color(0xFF666666),
+            const SizedBox(height: 4),
+            const Text(
+              'Lihat selengkapnya',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey,
+              ),
             ),
-          ),
-          trailing: const Icon(Icons.chevron_right),
+          ],
         ),
       ),
     );

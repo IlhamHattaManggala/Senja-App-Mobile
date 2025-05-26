@@ -65,7 +65,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
                             child: ButtonCustom(
                               height: 55,
                               name: 'Mulai',
-                              rightIcon: Icons.arrow_forward,
+                              rightIcon: Icon(Icons.arrow_forward),
                               onPressed: () => Get.toNamed('/overview'),
                               textColor: PalleteColor.green550,
                               color: PalleteColor.green50,

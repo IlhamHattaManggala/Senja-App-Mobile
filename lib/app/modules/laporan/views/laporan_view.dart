@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:senja_mobile/app/config/pallete_color.dart';
-
 import '../controllers/laporan_controller.dart';
 
 class LaporanView extends GetView<LaporanController> {
@@ -13,344 +12,336 @@ class LaporanView extends GetView<LaporanController> {
     return Scaffold(
       backgroundColor: PalleteColor.green50,
       appBar: AppBar(
-        leading: const BackButton(color: Colors.white),
-        title: const Text(
-          'Laporan',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-          ),
-        ),
-        backgroundColor: const Color(0xFF6B6211), // Olive green color
-        elevation: 0,
+        title: Obx(() => Text('Laporan: ${controller.tariName.value}')),
+        centerTitle: true,
+        backgroundColor: PalleteColor.green550,
+        foregroundColor: PalleteColor.green50,
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          // Cream background
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Chart Card
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(color: Color(0xFFD8CEA6), width: 1),
-                ),
-                color: const Color(0xFFF8F3E0),
-                margin: const EdgeInsets.only(bottom: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: Obx(() {
+        if (controller.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return Column(
+          children: [
+            const SizedBox(height: 16),
+
+            // Dropdown pilih jenis chart
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Obx(() => Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: PalleteColor.green50,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: PalleteColor.green550.withOpacity(0.4),
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: controller.selectedChartType.value,
+                        icon: const Icon(Icons.arrow_drop_down,
+                            color: Colors.blue),
+                        isExpanded: true,
+                        dropdownColor: PalleteColor.green50,
+                        elevation: 8,
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                              value: 'bar', child: Text('Bar Chart')),
+                          DropdownMenuItem(
+                              value: 'line', child: Text('Line Chart')),
+                          DropdownMenuItem(
+                              value: 'pie', child: Text('Pie Chart')),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.selectedChartType.value = value;
+                          }
+                        },
+                      ),
+                    ),
+                  )),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Chart Section
+            SizedBox(
+              height: 250,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Obx(() {
+                  final type = controller.selectedChartType.value;
+                  if (type == 'bar') {
+                    return _buildBarChart();
+                  } else if (type == 'line') {
+                    return _buildLineChart();
+                  } else if (type == 'pie') {
+                    return _buildPieChart();
+                  }
+                  return const SizedBox.shrink();
+                }),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+            const Text(
+              'Riwayat Gerakan',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+
+            // Table Section
+            Expanded(
+                child: Padding(
+              padding: EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Table(
+                  border: TableBorder.all(
+                      color: Colors.grey, width: 1), // Garis seperti Excel
+                  columnWidths: const {
+                    0: FixedColumnWidth(150), // DATE
+                    1: FixedColumnWidth(150), // GERAKAN
+                    2: FixedColumnWidth(80), // SCORE
+                  }, // Atur lebar kolom
                   children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(left: 16, top: 16, right: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // Header
+                    TableRow(
+                      decoration: BoxDecoration(color: PalleteColor.green550),
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('DATE',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: PalleteColor.green50,
+                              ),
+                              textAlign: TextAlign.center),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('GERAKAN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: PalleteColor.green50,
+                              ),
+                              textAlign: TextAlign.center),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text('SCORE',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: PalleteColor.green50,
+                              ),
+                              textAlign: TextAlign.center),
+                        ),
+                      ],
+                    ),
+                    // Data Rows
+                    ...controller.historiData.map((item) {
+                      return TableRow(
                         children: [
-                          const Text(
-                            'Skor',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF4A4A4A),
-                            ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item['date'] ?? '-'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item['gerakanName'] ??
+                                item['gerakan_name'] ??
+                                '-'),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(item['score']?.toString() ?? '-'),
                           ),
                         ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 200,
-                      child: _buildBarChart(),
-                    ),
-                    const SizedBox(height: 16),
+                      );
+                    }).toList(),
                   ],
                 ),
               ),
+            )),
+          ],
+        );
+      }),
+    );
+  }
 
-              // Riwayat Latihan Title
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Obx(() => Text(
-                          'Riwayat Latihan ${controller.tariName}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF4A4A4A),
-                          ),
-                        )),
-                    const Text(
-                      'Skor',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF4A4A4A),
-                      ),
+  Widget _buildBarChart() {
+    return BarChart(
+      BarChartData(
+        gridData: FlGridData(show: true),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index >= 0 && index < controller.scoreData.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'G${index + 1}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 10),
                     ),
-                  ],
-                ),
-              ),
-
-              // Table of training history
-              _buildTrainingHistoryTable(),
-            ],
+                  );
+                }
+                return const Text('');
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              interval: 20,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: const TextStyle(fontSize: 10),
+                );
+              },
+            ),
+          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: const Border(
+            left: BorderSide(),
+            bottom: BorderSide(),
           ),
         ),
+        minY: 0,
+        maxY: 100,
+        barGroups: controller.scoreData
+            .asMap()
+            .entries
+            .map(
+              (e) => BarChartGroupData(
+                x: e.key,
+                barRods: [
+                  BarChartRodData(
+                    toY: double.tryParse(e.value['score'].toString()) ?? 0.0,
+                    color: PalleteColor.green550,
+                    width: 20,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              ),
+            )
+            .toList(),
       ),
     );
   }
 
-  Widget _buildExportButton() {
-    return ElevatedButton(
-      onPressed: () {
-        controller.exportData();
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFFE9DFBE),
-        foregroundColor: Colors.black,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+  Widget _buildLineChart() {
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(show: true),
+        titlesData: FlTitlesData(
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                final index = value.toInt();
+                if (index >= 0 && index < controller.scoreData.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      'G${index + 1}',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  );
+                }
+                return const Text('');
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              interval: 20,
+              getTitlesWidget: (value, meta) {
+                return Text(
+                  value.toInt().toString(),
+                  style: const TextStyle(fontSize: 10),
+                );
+              },
+            ),
+          ),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
-      ),
-      child: Row(
-        children: const [
-          Text('Ekspor'),
-          SizedBox(width: 4),
-          Icon(Icons.chevron_right, size: 18),
+        borderData: FlBorderData(
+          show: true,
+          border: const Border(
+            left: BorderSide(),
+            bottom: BorderSide(),
+          ),
+        ),
+        minX: 0,
+        maxX: controller.scoreData.length > 1
+            ? (controller.scoreData.length - 1).toDouble()
+            : 1.0,
+        minY: 0,
+        maxY: 100,
+        lineBarsData: [
+          LineChartBarData(
+            spots: controller.scoreData
+                .asMap()
+                .entries
+                .map((e) => FlSpot(
+                      e.key.toDouble(),
+                      double.tryParse(e.value['score'].toString()) ?? 0.0,
+                    ))
+                .toList(),
+            isCurved: true,
+            color: PalleteColor.green550,
+            barWidth: 3,
+            dotData: FlDotData(show: true),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildBarChart() {
-    // Check if data exists, otherwise show placeholder
-    if (controller.scoreData.isEmpty) {
-      return const Center(
-        child: Text(
-          'Belum ada data latihan tersedia',
-          style: TextStyle(
-            color: Color(0xFF4A4A4A),
-            fontSize: 14,
-          ),
-        ),
-      );
-    }
-
-    final List<BarChartGroupData> barGroups = [
-      _makeBarGroup(0, controller.getScoreForDay(0), "Sen"),
-      _makeBarGroup(1, controller.getScoreForDay(1), "Sel"),
-      _makeBarGroup(2, controller.getScoreForDay(2), "Rab"),
-      _makeBarGroup(3, controller.getScoreForDay(3), "Kam"),
-      _makeBarGroup(4, controller.getScoreForDay(4), "Jum"),
-      _makeBarGroup(5, controller.getScoreForDay(5), "Sab"),
-      _makeBarGroup(6, controller.getScoreForDay(6), "Min"),
-      _makeBarGroup(7, controller.getScoreForDay(7), "Sat"),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: 100,
-          minY: 0,
-          groupsSpace: 12,
-          barTouchData: BarTouchData(
-            enabled: true,
-            touchTooltipData: BarTouchTooltipData(
-              getTooltipColor: (_) => Colors.blueGrey.withOpacity(0.8),
-            ),
-          ),
-          titlesData: FlTitlesData(
-            show: true,
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  String text = '';
-                  switch (value.toInt()) {
-                    case 0:
-                      text = 'Sen';
-                      break;
-                    case 1:
-                      text = 'Sel';
-                      break;
-                    case 2:
-                      text = 'Rab';
-                      break;
-                    case 3:
-                      text = 'Kam';
-                      break;
-                    case 4:
-                      text = 'Jum';
-                      break;
-                    case 5:
-                      text = 'Sab';
-                      break;
-                    case 6:
-                      text = 'Min';
-                      break;
-                    case 7:
-                      text = 'Sat';
-                      break;
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      text,
-                      style: const TextStyle(
-                        color: Color(0xFF4A4A4A),
-                        fontSize: 12,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 30,
-                getTitlesWidget: (value, meta) {
-                  if (value % 20 == 0) {
-                    return Text(
-                      value.toInt().toString(),
-                      style: const TextStyle(
-                        color: Color(0xFF4A4A4A),
-                        fontSize: 12,
-                      ),
-                    );
-                  }
-                  return const SizedBox();
-                },
-              ),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-          ),
-          gridData: FlGridData(
-            show: true,
-            horizontalInterval: 20,
-            checkToShowHorizontalLine: (value) => value % 20 == 0,
-            getDrawingHorizontalLine: (value) {
-              return FlLine(
-                color: const Color(0xFFD8CEA6),
-                strokeWidth: 1,
-              );
-            },
-          ),
-          borderData: FlBorderData(show: false),
-          barGroups: barGroups,
-        ),
-      ),
-    );
-  }
-
-  BarChartGroupData _makeBarGroup(int x, double y, String label) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: y,
-          color: const Color(0xFF6B6211),
-          width: 16,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(4),
-            topRight: Radius.circular(4),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTrainingHistoryTable() {
-    // Show placeholder message if no data
-    if (controller.historiData.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Center(
-          child: Text(
-            'Belum ada riwayat latihan tersedia',
-            style: TextStyle(
-              color: Color(0xFF4A4A4A),
-              fontSize: 14,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Table(
-      border: TableBorder.all(
-        color: const Color(0xFFD8CEA6),
-        width: 1,
-      ),
-      columnWidths: const {
-        0: FlexColumnWidth(2.5), // Tanggal
-        1: FlexColumnWidth(2), // Gerakan
-        2: FlexColumnWidth(1.5), // Skor
-      },
-      children: [
-        // Table Header
-        TableRow(
-          decoration: const BoxDecoration(color: Color(0xFFE9DFBE)),
-          children: [
-            _buildTableHeader('Tanggal'),
-            _buildTableHeader('Gerakan'),
-            _buildTableHeader('Skor'),
-          ],
-        ),
-        // Table Rows - Dynamic Data
-        ...controller.historiData.map((item) => _buildTableRow(
-            item['date'] ?? '', item['gerakan'] ?? '', item['score'] ?? '')),
-      ],
-    );
-  }
-
-  Widget _buildTableHeader(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-          color: Color(0xFF4A4A4A),
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-
-  TableRow _buildTableRow(String date, String gerakanName, String score) {
-    return TableRow(
-      children: [
-        _buildTableCell(date),
-        _buildTableCell(gerakanName),
-        _buildTableCell(score),
-      ],
-    );
-  }
-
-  Widget _buildTableCell(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Color(0xFF4A4A4A),
-        ),
-        textAlign: TextAlign.center,
+  Widget _buildPieChart() {
+    return PieChart(
+      PieChartData(
+        sections: controller.scoreData.asMap().entries.map((e) {
+          final value = double.tryParse(e.value['score'].toString()) ?? 0.0;
+          final index = e.key;
+          return PieChartSectionData(
+            value: value,
+            title: 'G${index + 1}',
+            color: Colors.primaries[index % Colors.primaries.length],
+            radius: 50,
+            titleStyle:
+                const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          );
+        }).toList(),
+        sectionsSpace: 2,
+        centerSpaceRadius: 40,
       ),
     );
   }

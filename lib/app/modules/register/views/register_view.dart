@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:senja_mobile/app/config/pallete_color.dart';
+import 'package:senja_mobile/app/widgets/button_custom.dart';
 import 'package:senja_mobile/app/widgets/input_field.dart';
 import 'package:senja_mobile/app/widgets/password_field.dart';
 
@@ -98,36 +99,18 @@ class RegisterView extends GetView<RegisterController> {
                                   )),
                               const SizedBox(height: 20),
                               SizedBox(
-                                width: double.infinity,
-                                child: Obx(() => ElevatedButton(
-                                      onPressed: controller.isLoading.value ||
-                                              !controller.isChecked.value
+                                width:
+                                    GetPlatform.isWeb ? 600 : double.infinity,
+                                child: Obx(() => ButtonCustom(
+                                      color: PalleteColor.green550,
+                                      textColor: PalleteColor.green50,
+                                      name: controller.isLoading.value
+                                          ? "Loading..."
+                                          : "Register",
+                                      onPressed: controller.isLoading.value
                                           ? null
                                           : () => controller.handleRegister(),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 50, vertical: 15),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                        ),
-                                        backgroundColor:
-                                            controller.isChecked.value
-                                                ? PalleteColor.green550
-                                                : Colors.grey,
-                                        foregroundColor: PalleteColor.green50,
-                                      ),
-                                      child: controller.isLoading.value
-                                          ? const CircularProgressIndicator(
-                                              color: PalleteColor.green500)
-                                          : Text(
-                                              "Daftar",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.black,
-                                              ),
-                                            ),
+                                      height: 55,
                                     )),
                               ),
                               const SizedBox(height: 20),

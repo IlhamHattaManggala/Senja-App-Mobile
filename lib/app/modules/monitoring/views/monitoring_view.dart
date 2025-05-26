@@ -81,6 +81,48 @@ class MonitoringView extends GetView<MonitoringController> {
 
           const SizedBox(height: 8),
 
+          // Bagian tombol mulai latihan atau timer
+          Obx(() {
+            if (!controller.isTraining.value) {
+              // Tampilkan tombol mulai latihan jika belum mulai
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: ElevatedButton(
+                  onPressed: () {
+                    controller.startTraining();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: PalleteColor.green550,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 12),
+                  ),
+                  child: const Text(
+                    'Mulai Latihan',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              );
+            } else {
+              // Tampilkan timer countdown saat latihan berjalan
+              final minutes = (controller.remainingTime.value ~/ 60)
+                  .toString()
+                  .padLeft(2, '0');
+              final seconds = (controller.remainingTime.value % 60)
+                  .toString()
+                  .padLeft(2, '0');
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  'Waktu tersisa: $minutes:$seconds',
+                  style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                ),
+              );
+            }
+          }),
+
           // Kamera di bawah
           Expanded(
             child: Obx(() {

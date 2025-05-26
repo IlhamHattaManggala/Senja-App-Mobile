@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:senja_mobile/app/config/pallete_color.dart';
+import 'package:senja_mobile/app/widgets/button_custom.dart';
 import 'package:senja_mobile/app/widgets/input_field.dart';
 import 'package:senja_mobile/app/widgets/password_field.dart';
 import '../controllers/login_controller.dart';
@@ -96,32 +98,62 @@ class LoginView extends GetView<LoginController> {
                             const SizedBox(height: 20),
                             SizedBox(
                               width: GetPlatform.isWeb ? 600 : double.infinity,
-                              child: Obx(
-                                () => ElevatedButton(
-                                  onPressed: controller.isLoading.value
-                                      ? null
-                                      : () => controller.handleLogin(),
-                                  // onPressed: controller.isLoading.value
-                                  //     ? null
-                                  //     : () => Get.offAllNamed('/beranda'),
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 50, vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    backgroundColor: PalleteColor.green550,
-                                    foregroundColor: PalleteColor.green50,
-                                  ),
-                                  child: controller.isLoading.value
-                                      ? const CircularProgressIndicator(
-                                          color: PalleteColor.green500)
-                                      : const Text("Masuk",
-                                          style: TextStyle(fontSize: 16)),
-                                ),
-                              ),
+                              child: Obx(() => ButtonCustom(
+                                    color: PalleteColor.green550,
+                                    textColor: PalleteColor.green50,
+                                    name: controller.isLoading.value
+                                        ? "Loading..."
+                                        : "Masuk",
+                                    onPressed: controller.isLoading.value
+                                        ? null
+                                        : () => controller.handleLogin(),
+                                    height: 55,
+                                  )),
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
+                            SizedBox(
+                                width:
+                                    GetPlatform.isWeb ? 600 : double.infinity,
+                                child: Obx(() => ButtonCustom(
+                                      name: "",
+                                      onPressed: controller
+                                              .isLoadingGoogle.value
+                                          ? null
+                                          : () => controller.loginWithGoogle(),
+                                      height: 55,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          controller.isLoadingGoogle.value
+                                              ? const SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color:
+                                                        PalleteColor.green500,
+                                                  ),
+                                                )
+                                              : const FaIcon(
+                                                  FontAwesomeIcons.google,
+                                                  color: PalleteColor.green550,
+                                                ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            controller.isLoadingGoogle.value
+                                                ? "Loading..."
+                                                : "Masuk dengan Google",
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: PalleteColor.green550,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ))),
+                            const SizedBox(height: 10),
                           ],
                         ),
                       ),

@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:senja_mobile/app/data/models/user.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
+import 'package:senja_mobile/app/modules/account/controllers/account_controller.dart';
 
 class PengaturanAkunController extends GetxController {
   final api = Get.find<ApiProvider>();
@@ -10,6 +12,9 @@ class PengaturanAkunController extends GetxController {
   final passwordController = TextEditingController();
 
   final user = Rxn<User>();
+  XFile? pickedImage;
+
+  final picker = ImagePicker();
 
   final count = 0.obs;
   @override
@@ -40,6 +45,14 @@ class PengaturanAkunController extends GetxController {
     emailController.text = data.email ?? '';
   }
 
+  void pickImage() async {
+    final result = await picker.pickImage(source: ImageSource.gallery);
+    if (result != null) {
+      pickedImage = result;
+      update(); // Supaya tampilan avatar ikut berubah
+    }
+  }
+
   Future<void> updateProfile() async {
     try {
       // Validasi sederhana (optional)
@@ -48,23 +61,21 @@ class PengaturanAkunController extends GetxController {
         return;
       }
 
-      final response = await api.updateUserProfile({
-        'name': nameController.text,
-        'email': emailController.text,
-        'password':
-            passwordController.text.isEmpty ? null : passwordController.text,
-      });
+      final response = await api.updateUserProfile(
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        avatar: pickedImage,
+      );
 
       if (response['status'] == 'sukses') {
         Get.snackbar('Sukses', 'Profil berhasil diperbarui');
-        // Update user lokal juga
-        user.update((val) {
-          val?.name = nameController.text;
-          val?.email = emailController.text;
-        });
+        user.value = User.fromJson(response['data']);
+        update();
+        final accountController = Get.find<AccountController>();
+        accountController.getUser();
       } else {
-        Get.snackbar(
-            'Gagal', response['message'] ?? 'Gagal memperbarui profil');
+        Get.snackbar('Gagal', response['pesan'] ?? 'Gagal memperbarui profil');
       }
     } catch (e) {
       Get.snackbar('Error', 'Terjadi kesalahan: $e');

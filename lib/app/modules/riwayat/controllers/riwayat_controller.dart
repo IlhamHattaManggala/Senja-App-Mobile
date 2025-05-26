@@ -27,38 +27,14 @@ class RiwayatController extends GetxController {
   }
 
   void _loadGerakanData() {}
-  void onGerakanTapped(int gerakanId) {
+  void onGerakanTapped(String tariName) {
     // Navigate to Laporan page with default values if data is null
     Get.toNamed('/laporan', arguments: {
-      'gerakanId': gerakanId,
-      'tariName': 'Tari Gambyong', // Default value
-      // Add any other necessary parameters with default values
+      'tariName': tariName,
     });
+    print('$tariName telah dipilih');
   }
-  // Method untuk menangani ketika gerakan di-tap
-  // void onGerakanTapped(int gerakanId) {
-  //   // Simpan gerakan yang dipilih
-  //   selectedGerakanId.value = gerakanId;
 
-  //   // Tambahkan ke histori jika belum ada
-  //   if (!viewedGerakans.contains(gerakanId)) {
-  //     viewedGerakans.add(gerakanId);
-  //   }
-
-  //   // Navigasi ke detail gerakan
-  //   _navigateToGerakanDetail(gerakanId);
-  // }
-
-  // Method untuk navigasi ke halaman detail gerakan
-  // void _navigateToGerakanDetail(int gerakanId) {
-  //   // Navigasi ke halaman detail gerakan
-  //   Get.toNamed('/gerakan-detail/$gerakanId');
-
-  //   // Alternatif: jika menggunakan parameter
-  //   // Get.toNamed('/gerakan-detail', arguments: {'id': gerakanId});
-  // }
-
-  // Method untuk mendapatkan info gerakan berdasarkan ID
   Map<String, dynamic> getGerakanInfo(int gerakanId) {
     // Ini adalah contoh mock data
     return {
@@ -73,6 +49,5 @@ class RiwayatController extends GetxController {
   // Method untuk menandai gerakan sebagai selesai dipelajari
   void markGerakanAsCompleted(int gerakanId) {
     print('Gerakan $gerakanId ditandai sebagai selesai');
-    // Mungkin perlu update ke API atau database lokal
   }
 }
