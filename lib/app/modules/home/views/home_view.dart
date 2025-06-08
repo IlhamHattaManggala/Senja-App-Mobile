@@ -123,6 +123,40 @@ class HomeView extends GetView<HomeController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Get.toNamed('/berita');
+                                  },
+                                  icon: Icon(Icons.newspaper),
+                                  label: Text("Berita Tari"),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: PalleteColor.green550,
+                                    foregroundColor: PalleteColor.green50,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    controller.goToWeb();
+                                  },
+                                  icon: Icon(Icons.bar_chart),
+                                  label: Text("Visualisasi Data Tari"),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: PalleteColor.green550,
+                                    foregroundColor: PalleteColor.green50,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             const Text(
                               "Monitoring Gerakan Tari",
                               style: TextStyle(

@@ -1,9 +1,10 @@
 import 'package:get/get.dart';
-import 'package:senja_mobile/app/data/cache/video_cache_manager.dart';
+import 'package:senja_mobile/app/config/config_url.dart';
 import 'package:senja_mobile/app/data/models/seni_lainnya.dart';
 import 'package:senja_mobile/app/data/models/tari.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
 import 'package:senja_mobile/app/data/storage/storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeController extends GetxController {
   var selectedLevel = "Semua Level".obs;
@@ -13,13 +14,10 @@ class HomeController extends GetxController {
   // Data dari API
   var tariList = <Tari>[].obs;
   var seniLainnyaList = <SeniLainnya>[].obs;
-  var videoCacheMap = <String, String>{}.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // seniLainnyaList.assignAll(dummySeniLainnya);
-    // tariList.assignAll(dummyTariList);
     fetchBerandaData();
   }
 
@@ -37,19 +35,8 @@ class HomeController extends GetxController {
     try {
       isLoading(true);
       final result = await api.fetchBeranda();
-
       tariList.value = result['tari'];
       seniLainnyaList.value = result['seni_lainnya'];
-      for (var tari in tariList) {
-        for (var gerakan in tari.gerakanTari!) {
-          final videoUrl = gerakan.videoUrl ?? '';
-          if (videoUrl.isNotEmpty) {
-            final file = await VideoCacheManager().getSingleFile(videoUrl);
-            print("✅ Downloaded: ${file.path}");
-            videoCacheMap[videoUrl] = file.path;
-          }
-        }
-      }
     } catch (e) {
       print('Error saat fetch beranda: $e');
     } finally {
@@ -64,5 +51,14 @@ class HomeController extends GetxController {
 
   void updateLevel(String level) {
     selectedLevel.value = level;
+  }
+
+  void goToWeb() async {
+    final url = Uri.parse(ConfigUrl.StreamlitUrl);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      Get.snackbar("Gagal", "Tidak dapat membuka link");
+    }
   }
 }

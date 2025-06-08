@@ -42,6 +42,8 @@ import '../modules/tentang/bindings/tentang_binding.dart';
 import '../modules/tentang/views/tentang_view.dart';
 import '../modules/verifikasi/bindings/verifikasi_binding.dart';
 import '../modules/verifikasi/views/verifikasi_view.dart';
+import '../modules/verify-email/bindings/verify_email_binding.dart';
+import '../modules/verify-email/views/verify_email_view.dart';
 
 part 'app_routes.dart';
 
@@ -155,6 +157,11 @@ class AppPages {
       name: _Paths.RESET_PASSWORD,
       page: () => const ResetPasswordView(),
       binding: ResetPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.VERIFY_EMAIL,
+      page: () => const VerifyEmailView(),
+      binding: VerifyEmailBinding(),
     ),
   ];
 }

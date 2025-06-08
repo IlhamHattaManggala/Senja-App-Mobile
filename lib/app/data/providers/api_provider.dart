@@ -39,13 +39,20 @@ class ApiProvider {
       return user;
     } else {
       // Optional: bisa print log atau throw exception di sini
-      print('Login failed: ${response.body}');
-      return null;
+      final body = json.decode(response.body);
+
+      // Cetak pesan error dari backend (jika ada)
+      final message = body['pesan'] ?? body['message'] ?? 'Login gagal';
+      print('Login failed: $message');
+
+      // Tampilkan juga ke UI jika kamu ingin tangkap exception-nya nanti
+      throw Exception(message);
     }
   }
 
   Future<User?> loginGoogle() async {
     try {
+      await GoogleSignIn().signOut();
       // Step 1: Login Google
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       if (googleUser == null) return null;
@@ -114,11 +121,13 @@ class ApiProvider {
     }
   }
 
-  Future<bool> register(String name, String email, String password) async {
-    final api = storage.getApiKey();
+  Future<User?> register(String name, String email, String password) async {
     final response = await http.post(
       Uri.parse(ConfigUrl.registerUrl),
-      headers: {'Content-Type': 'application/json', 'x-api-key': '$api'},
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'senjawebdev-12'
+      },
       body: jsonEncode({
         'name': name,
         'email': email,
@@ -127,12 +136,115 @@ class ApiProvider {
     );
 
     if (response.statusCode == 201 || response.statusCode == 200) {
-      // sukses daftar
-      return true;
+      final body = json.decode(response.body);
+      final data = body['data'];
+      await storage.saveToken(data['token']);
+      await storage.saveApiKey('senjawebdev-12');
+
+      // Gabungkan user dan token ke dalam satu map, lalu parse ke model
+      final user = User.fromJson({
+        ...data['user'],
+        'token': data['token'],
+      });
+
+      return user;
     } else {
       // gagal
       print('Register failed: ${response.body}');
-      return false;
+    }
+    return null;
+  }
+
+  Future<User?> registerGoogle() async {
+    try {
+      await GoogleSignIn().signOut();
+      // Step 1: Login Google
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return null;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final fb_auth.OAuthCredential credential =
+          fb_auth.GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Step 2: Login Firebase
+      final fb_auth.UserCredential userCredential =
+          await fb_auth.FirebaseAuth.instance.signInWithCredential(credential);
+
+      final fb_auth.User? firebaseUser = userCredential.user;
+
+      if (firebaseUser != null) {
+        String? idToken = await firebaseUser.getIdToken();
+
+        Map<String, dynamic> requestBody = {
+          'idToken': idToken,
+        };
+
+        // Step 3: Kirim data ke backend
+        final Uri url = Uri.parse(ConfigUrl.registerGoogleUrl);
+
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': 'senjawebdev-12',
+          },
+          body: jsonEncode(requestBody),
+        );
+
+        if (response.statusCode == 201) {
+          final body = json.decode(response.body);
+          final data = body['data'];
+
+          // Simpan token dan api key
+          await storage.saveToken(data['token']);
+          await storage.saveApiKey('senjawebdev-12');
+
+          // Parse ke User model
+          final user = User.fromJson({
+            ...data['user'],
+            'token': data['token'], // jika diperlukan
+          });
+
+          print('Registrasi Google berhasil & data backend diterima');
+          return user;
+        } else {
+          print(
+              'Login Firebase berhasil, tapi gagal kirim ke backend (register): ${response.body}');
+          return null;
+        }
+      }
+
+      return null;
+    } catch (e) {
+      print("Terjadi error saat register Google: $e");
+      return null;
+    }
+  }
+
+  Future<bool> verifyEmail(String pin) async {
+    final token = storage.getToken();
+    final api = storage.getApiKey();
+
+    final response = await http.post(
+      Uri.parse(ConfigUrl.verifyEmailUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-api-key': '$api'
+      },
+      body: jsonEncode({'otp': pin}),
+    );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception(
+          jsonDecode(response.body)['message'] ?? 'Verifikasi gagal');
     }
   }
 

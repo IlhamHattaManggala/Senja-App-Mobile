@@ -14,6 +14,20 @@ class LaporanController extends GetxController {
   final selectedChartType = 'bar'.obs;
   final riwayatList = <Map<String, dynamic>>[].obs;
 
+  final currentPage = 1.obs;
+  final itemsPerPage = 5.obs;
+
+  int get totalPages => (historiData.length / itemsPerPage.value).ceil();
+
+  List<Map<String, dynamic>> get paginatedData {
+    final start = (currentPage.value - 1) * itemsPerPage.value;
+    final end = start + itemsPerPage.value;
+    return historiData.sublist(
+      start,
+      end > historiData.length ? historiData.length : end,
+    );
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -91,6 +105,7 @@ class LaporanController extends GetxController {
     try {
       isLoading(true);
       final result = await api.fetchRiwayat();
+      debugPrint(result.toString());
 
       // Simpan semua data
       riwayatList.assignAll(result!);

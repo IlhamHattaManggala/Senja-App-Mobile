@@ -26,4 +26,16 @@ class Storage {
   Future<void> removeApiKey() async {
     await _box.remove('apikey');
   }
+
+  Future<void> removeLoggedUser() async {
+    await _box.remove('isLoggedIn');
+  }
+
+  Future<void> removeUser() async {
+    await _box.remove('user');
+  }
+
+  Future<void> removeExpiryToken() async {
+    await _box.remove('tokenExpiredAt');
+  }
 }

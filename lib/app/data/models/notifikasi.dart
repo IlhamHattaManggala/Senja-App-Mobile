@@ -22,7 +22,9 @@ class Notifikasi {
       body: json['body'] ?? '',
       topic: json['topic'],
       isRead: json['isRead'] ?? false,
-      time: json['time'] ?? DateTime.now().toIso8601String(),
+      time: json['time'] is String
+          ? json['time']
+          : DateTime.now().toIso8601String(),
     );
   }
 

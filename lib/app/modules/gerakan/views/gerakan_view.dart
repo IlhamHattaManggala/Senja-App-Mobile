@@ -47,55 +47,46 @@ class GerakanView extends GetView<GerakanController> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(color: Color(0xFFF5F3EB)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tari.name ?? 'Nama Tarian',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    tari.description ?? 'description belum tersedia',
-                    style: const TextStyle(fontSize: 15, height: 1.5),
-                  ),
-                  const SizedBox(height: 20),
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  // Daftar Gerakan
-                  const Text(
-                    'Gerakan',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Daftar gerakan dari API
-                  Expanded(
-                    child: Obx(() {
-                      if (controller.isLoading.value) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      if (controller.gerakanList.isEmpty) {
-                        return const Center(
-                            child: Text('Tidak ada data gerakan.'));
-                      }
-
-                      return ListView.builder(
-                        itemCount: controller.gerakanList.length,
-                        itemBuilder: (context, index) {
-                          final gerakan = controller.gerakanList[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ListTile(
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        tari.name ?? 'Nama Tarian',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        tari.description ?? 'description belum tersedia',
+                        style: const TextStyle(fontSize: 15, height: 1.5),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Gerakan',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      if (controller.gerakanList.isEmpty)
+                        const Center(child: Text('Tidak ada data gerakan.'))
+                      else
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.gerakanList.length,
+                          itemBuilder: (context, index) {
+                            final gerakan = controller.gerakanList[index];
+                            return InkWell(
                               onTap: () {
                                 Get.toNamed('/monitoring', arguments: {
                                   'tariName': tari.name ?? '',
@@ -103,34 +94,60 @@ class GerakanView extends GetView<GerakanController> {
                                   'gerakanVideoUrl': gerakan.videoUrl ?? '',
                                 });
                               },
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: CachedNetworkImage(
-                                  imageUrl: (gerakan.imageUrl?.isNotEmpty ??
-                                          false)
-                                      ? gerakan.imageUrl!
-                                      : 'https://th.bing.com/th/id/OIP.DrdVLxWoqBK9dRhOrTvTsAHaFj?rs=1&pid=ImgDetMain',
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2)),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.broken_image, size: 30),
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: PalleteColor.green50,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    )
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.play_circle_fill,
+                                        color: PalleteColor.green400, size: 36),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            gerakan.name ?? '-',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            'Klik untuk latihan gerakan ini',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Icon(Icons.arrow_forward_ios,
+                                        size: 16, color: Colors.grey),
+                                  ],
                                 ),
                               ),
-                              title: Text(gerakan.name ?? '-'),
-                              trailing: const Icon(Icons.arrow_forward_ios,
-                                  size: 16, color: Colors.grey),
-                            ),
-                          );
-                        },
-                      );
-                    }),
+                            );
+                          },
+                        ),
+                    ],
                   ),
-                ],
-              ),
+                );
+              }),
             ),
           )
         ],

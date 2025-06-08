@@ -29,10 +29,6 @@ class AccountController extends GetxController {
     super.onClose();
   }
 
-  Future<void> logout() async {
-    // navbarController.logout();
-  }
-
   Future<void> getUser() async {
     try {
       final result = await api.fetchUser();
@@ -40,6 +36,21 @@ class AccountController extends GetxController {
       update();
     } catch (e) {
       print("Error fetching user: $e");
+    }
+  }
+
+  Future<void> logoutUser() async {
+    try {
+      await storage.removeToken();
+      await storage.removeApiKey();
+      await storage.removeLoggedUser();
+      await storage.removeUser();
+      await storage.removeExpiryToken();
+
+      Get.offAllNamed('/login');
+      Get.snackbar("Logout Berhasil", "Anda telah keluar dari akun.");
+    } catch (e) {
+      Get.snackbar("Logout Gagal", "Terjadi kesalahan: ${e.toString()}");
     }
   }
   // I/flutter (23384): Error fetching user: type 'int' is not a subtype of type 'String

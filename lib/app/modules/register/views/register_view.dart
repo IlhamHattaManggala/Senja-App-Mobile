@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -107,9 +108,29 @@ class RegisterView extends GetView<RegisterController> {
                                       name: controller.isLoading.value
                                           ? "Loading..."
                                           : "Register",
-                                      onPressed: controller.isLoading.value
+                                      onPressed: (!controller.isChecked.value ||
+                                              controller.isLoading.value)
                                           ? null
                                           : () => controller.handleRegister(),
+                                      height: 55,
+                                    )),
+                              ),
+                              const SizedBox(height: 20),
+                              SizedBox(
+                                width:
+                                    GetPlatform.isWeb ? 600 : double.infinity,
+                                child: Obx(() => ButtonCustom(
+                                      leftIcon: FaIcon(FontAwesomeIcons.google),
+                                      color: PalleteColor.green550,
+                                      textColor: PalleteColor.green50,
+                                      name: controller.isLoadingGoogle.value
+                                          ? "Loading..."
+                                          : "Register",
+                                      onPressed: (!controller.isChecked.value ||
+                                              controller.isLoadingGoogle.value)
+                                          ? null
+                                          : () =>
+                                              controller.registerWithGoogle(),
                                       height: 55,
                                     )),
                               ),

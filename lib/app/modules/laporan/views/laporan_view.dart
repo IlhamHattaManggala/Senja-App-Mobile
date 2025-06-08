@@ -102,78 +102,113 @@ class LaporanView extends GetView<LaporanController> {
             const SizedBox(height: 8),
 
             // Table Section
+            // Table Section
             Expanded(
-                child: Padding(
-              padding: EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Table(
-                  border: TableBorder.all(
-                      color: Colors.grey, width: 1), // Garis seperti Excel
-                  columnWidths: const {
-                    0: FixedColumnWidth(150), // DATE
-                    1: FixedColumnWidth(150), // GERAKAN
-                    2: FixedColumnWidth(80), // SCORE
-                  }, // Atur lebar kolom
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   children: [
-                    // Header
-                    TableRow(
-                      decoration: BoxDecoration(color: PalleteColor.green550),
-                      children: const [
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('DATE',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: PalleteColor.green50,
-                              ),
-                              textAlign: TextAlign.center),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('GERAKAN',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: PalleteColor.green50,
-                              ),
-                              textAlign: TextAlign.center),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text('SCORE',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: PalleteColor.green50,
-                              ),
-                              textAlign: TextAlign.center),
-                        ),
-                      ],
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Obx(() => Table(
+                              border:
+                                  TableBorder.all(color: Colors.grey, width: 1),
+                              columnWidths: const {
+                                0: FixedColumnWidth(150),
+                                1: FixedColumnWidth(150),
+                                2: FixedColumnWidth(80),
+                              },
+                              children: [
+                                // Header
+                                TableRow(
+                                  decoration: BoxDecoration(
+                                      color: PalleteColor.green550),
+                                  children: const [
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text('DATE',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            color: PalleteColor.green50,
+                                          ),
+                                          textAlign: TextAlign.center),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text('GERAKAN',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            color: PalleteColor.green50,
+                                          ),
+                                          textAlign: TextAlign.center),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text('SCORE',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w900,
+                                            color: PalleteColor.green50,
+                                          ),
+                                          textAlign: TextAlign.center),
+                                    ),
+                                  ],
+                                ),
+                                // Paginated Data Rows
+                                ...controller.paginatedData.map((item) {
+                                  return TableRow(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(item['date'] ?? '-'),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(item['gerakanName'] ??
+                                            item['gerakan_name'] ??
+                                            '-'),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                            item['score']?.toString() ?? '-'),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ],
+                            )),
+                      ),
                     ),
-                    // Data Rows
-                    ...controller.historiData.map((item) {
-                      return TableRow(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item['date'] ?? '-'),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item['gerakanName'] ??
-                                item['gerakan_name'] ??
-                                '-'),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(item['score']?.toString() ?? '-'),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+
+                    // Pagination Controls
+                    Obx(() => Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chevron_left),
+                              onPressed: controller.currentPage.value > 1
+                                  ? () => controller.currentPage.value--
+                                  : null,
+                            ),
+                            Text(
+                              'Halaman ${controller.currentPage.value} dari ${controller.totalPages}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.chevron_right),
+                              onPressed: controller.currentPage.value <
+                                      controller.totalPages
+                                  ? () => controller.currentPage.value++
+                                  : null,
+                            ),
+                          ],
+                        )),
                   ],
                 ),
               ),
-            )),
+            ),
           ],
         );
       }),
@@ -192,10 +227,12 @@ class LaporanView extends GetView<LaporanController> {
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index >= 0 && index < controller.scoreData.length) {
+                  final gerakanName =
+                      controller.scoreData[index]['gerakan_name'] ?? '';
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      'G${index + 1}',
+                      gerakanName,
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 10),
                     ),
@@ -263,10 +300,12 @@ class LaporanView extends GetView<LaporanController> {
               getTitlesWidget: (value, meta) {
                 final index = value.toInt();
                 if (index >= 0 && index < controller.scoreData.length) {
+                  final gerakanName =
+                      controller.scoreData[index]['gerakan_name'] ?? "";
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      'G${index + 1}',
+                      gerakanName,
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 10),
                     ),
@@ -333,7 +372,7 @@ class LaporanView extends GetView<LaporanController> {
           final index = e.key;
           return PieChartSectionData(
             value: value,
-            title: 'G${index + 1}',
+            title: e.value['gerakan_name'] ?? "",
             color: Colors.primaries[index % Colors.primaries.length],
             radius: 50,
             titleStyle:

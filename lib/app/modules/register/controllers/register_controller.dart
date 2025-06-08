@@ -5,6 +5,7 @@ import 'package:senja_mobile/app/data/providers/api_provider.dart';
 class RegisterController extends GetxController {
   var isChecked = false.obs;
   var isLoading = false.obs;
+  var isLoadingGoogle = false.obs;
   var isHiddenPass = true.obs;
   var isHiddenConfirmPass = true.obs;
   final api = Get.find<ApiProvider>();
@@ -66,11 +67,29 @@ class RegisterController extends GetxController {
 
     isLoading.value = false;
 
-    if (success) {
+    if (success != null) {
       Get.snackbar("Berhasil", "Akun berhasil dibuat. Silakan login.");
-      Get.offAllNamed('/login');
+      Get.offAllNamed('/verify-email');
     } else {
       Get.snackbar("Gagal", "Registrasi gagal. Periksa data Anda.");
+    }
+  }
+
+  Future<void> registerWithGoogle() async {
+    try {
+      isLoadingGoogle.value = true;
+
+      final user = await api.registerGoogle();
+      isLoadingGoogle.value = false;
+      if (user != null) {
+        Get.offAllNamed('/verify-email');
+      }
+      Get.snackbar(
+          "Registrasi Berhasil", "Silahkan cek email untuk memasukkan OTP");
+    } catch (e) {
+      isLoadingGoogle.value = false;
+      Get.snackbar("Error", "Terjadi kesalahan saat registrasi Google");
+      print("Registrasi Google error: $e");
     }
   }
 }

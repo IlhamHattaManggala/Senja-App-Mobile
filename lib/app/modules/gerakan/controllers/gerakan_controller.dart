@@ -28,7 +28,7 @@ class GerakanController extends GetxController {
 
     // Misal ambil dari properti langsung
     gerakanList.assignAll(tari.gerakanTari ?? []);
-    print(gerakanList);
+    print(gerakanList.toString());
 
     // Jika perlu delay loading untuk simulasi atau animasi spinner
     Future.delayed(const Duration(milliseconds: 500), () {

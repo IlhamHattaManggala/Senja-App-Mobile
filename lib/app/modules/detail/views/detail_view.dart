@@ -209,9 +209,9 @@ class DetailView extends GetView<DetailController> {
                   const SizedBox(height: 4),
                   ReadMoreText(
                     description,
-                    trimLines: 4,
+                    trimLines: 3,
                     trimMode: TrimMode.Line,
-                    trimCollapsedText: '...Lihat selengkapnya',
+                    trimCollapsedText: 'Lihat selengkapnya',
                     trimExpandedText: ' Sembunyikan',
                     style: const TextStyle(
                       fontSize: 16,
@@ -255,7 +255,7 @@ class DetailView extends GetView<DetailController> {
   // Placeholder image
   Widget _buildPlaceholderImage() {
     return Container(
-      width: 60,
+      width: double.infinity,
       height: 110,
       color: Colors.grey[300],
       child: const Icon(Icons.image_not_supported, size: 24),

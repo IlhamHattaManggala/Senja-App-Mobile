@@ -30,120 +30,120 @@ class NotifikasiView extends GetView<NotifikasiController> {
 
         final data = controller.notif;
         if (data.isEmpty) {
-          return Center(child: Text('Tidak ada notifikasi.'));
+          return const Center(
+            child: Text(
+              'Tidak ada notifikasi.',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+          );
         }
 
-        return ListView.builder(
+        return ListView.separated(
           itemCount: data.length,
+          padding: const EdgeInsets.all(16),
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final notif = data[index];
-            return MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () {
-                  if (!notif.isRead!) {
-                    controller.updateNotif(notif);
-                  }
-                  Get.toNamed('/detail-notif', arguments: notif);
-                },
+            final isUnread = !(notif.isRead ?? true);
+
+            return GestureDetector(
+              onTap: () {
+                if (isUnread) controller.updateNotif(notif);
+                Get.toNamed('/detail-notif', arguments: notif);
+              },
+              child: Card(
+                elevation: 3,
+                color: PalleteColor.green50,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: isUnread
+                      ? const BorderSide(
+                          color: PalleteColor.green600, width: 1.5)
+                      : BorderSide.none,
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: Card(
-                    color: PalleteColor.green50,
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: notif.isRead!
-                          ? BorderSide.none
-                          : const BorderSide(
-                              color: PalleteColor.green600, width: 1.5),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.notifications_active_outlined,
+                          color: PalleteColor.green600, size: 28),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              notif.title,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: PalleteColor.green700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              notif.time != null
+                                  ? DateTime.parse(notif.time!)
+                                      .toLocal()
+                                      .toString()
+                                      .split(' ')[0]
+                                  : '',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              notif.body,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: PalleteColor.green100,
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuButton<String>(
+                        icon:
+                            const Icon(Icons.more_vert, color: Colors.black54),
+                        onSelected: (value) {
+                          if (value == 'read') {
+                            notif.isRead = true;
+                            controller.updateNotif(notif);
+                          } else if (value == 'delete') {
+                            controller.deleteNotif(notif);
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'read',
+                            child: Row(
                               children: [
-                                Text(
-                                  notif.title,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: PalleteColor.green700,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  notif.time != null
-                                      ? DateTime.parse(notif.time!)
-                                          .toLocal()
-                                          .toString()
-                                          .split(' ')[0]
-                                      : '',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: PalleteColor.green700,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  notif.body,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: PalleteColor.green100,
-                                  ),
-                                ),
+                                Icon(Icons.mark_email_read_outlined,
+                                    color: PalleteColor.green550, size: 20),
+                                SizedBox(width: 8),
+                                Text('Tandai dibaca'),
                               ],
                             ),
                           ),
-                          PopupMenuButton<String>(
-                            color: PalleteColor.green50,
-                            padding: EdgeInsets.zero,
-                            icon: const Icon(Icons.more_horiz,
-                                size: 20, color: PalleteColor.green700),
-                            onSelected: (value) {
-                              if (value == 'read') {
-                                // Tandai sebagai dibaca
-                                notif.isRead = true;
-                                controller.updateNotif(notif);
-                              } else if (value == 'delete') {
-                                // Hapus notifikasi
-                                controller.deleteNotif(notif);
-                              }
-                            },
-                            itemBuilder: (context) => const [
-                              PopupMenuItem(
-                                value: 'read',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.mark_email_read_outlined,
-                                        color: PalleteColor.green550, size: 20),
-                                    SizedBox(width: 8),
-                                    Text('Tandai dibaca'),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: 'delete',
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.delete_outline,
-                                        color: PalleteColor.green600, size: 20),
-                                    SizedBox(width: 8),
-                                    Text('Hapus'),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete_outline,
+                                    color: Colors.red, size: 20),
+                                SizedBox(width: 8),
+                                Text('Hapus'),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),

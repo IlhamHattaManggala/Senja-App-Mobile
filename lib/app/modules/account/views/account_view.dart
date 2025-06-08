@@ -152,7 +152,7 @@ class AccountView extends GetView<AccountController> {
                           color: PalleteColor.green550,
                           textColor: PalleteColor.green50,
                           onPressed: () {
-                            Get.offAllNamed('/login');
+                            controller.logoutUser();
                           },
                         )
                       ],

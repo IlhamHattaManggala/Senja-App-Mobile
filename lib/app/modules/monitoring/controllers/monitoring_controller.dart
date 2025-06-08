@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:chewie/chewie.dart';
 import 'package:senja_mobile/app/data/providers/api_provider.dart';
-import 'package:senja_mobile/app/modules/home/controllers/home_controller.dart';
 import 'package:video_player/video_player.dart';
 import 'package:google_mlkit_pose_detection/google_mlkit_pose_detection.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -53,6 +51,7 @@ class MonitoringController extends GetxController {
     final tariName = args['tariName'];
     gerakanName = args['gerakanName'];
     final videoUrl = args['gerakanVideoUrl'];
+    print(videoUrl);
     poseSequence.clear();
     predictedLabel.value = '';
     totalPredictions = 0;
@@ -66,7 +65,12 @@ class MonitoringController extends GetxController {
   }
 
   @override
-  void onClose() {
+  void onClose() async {
+    try {
+      await cameraController?.stopImageStream(); // ⬅️ Ini penting!
+    } catch (e) {
+      print('Gagal stopImageStream: $e');
+    }
     cameraController?.dispose();
     videoController.dispose();
     chewieController.dispose();
@@ -86,7 +90,7 @@ class MonitoringController extends GetxController {
           labelPath = 'assets/labels/tari_topeng_endel.txt';
           break;
         case 'tari guci':
-          modelPath = 'assets/models/tari_guci.tflite';
+          modelPath = 'assets/models/tari_guci_model.tflite';
           labelPath = 'assets/labels/tari_guci.txt';
           break;
         case 'tari gambyong':
@@ -101,6 +105,8 @@ class MonitoringController extends GetxController {
       labels = await rootBundle
           .loadString(labelPath)
           .then((value) => value.split('\n'));
+      print('Input shape: ${interpreter!.getInputTensor(0).shape}');
+      print('Output shape: ${interpreter!.getOutputTensor(0).shape}');
 
       print('✅ Model "$tariName" berhasil dimuat dari $modelPath');
       print('✅ Labels dimuat: ${labels.length} label');
@@ -126,7 +132,11 @@ class MonitoringController extends GetxController {
       );
 
       await cameraController!.initialize();
-      await cameraController!.startImageStream(processCameraImage);
+      try {
+        await cameraController!.startImageStream(processCameraImage);
+      } catch (e) {
+        print('Gagal startImageStream: $e');
+      }
       isCameraInitialized.value = true;
     } catch (e) {
       print('Camera init error: $e');
@@ -136,14 +146,7 @@ class MonitoringController extends GetxController {
   Future<void> initializeVideo(String videoUrl) async {
     if (videoUrl.isEmpty) return;
     try {
-      final homeController = Get.find<HomeController>();
-      final cachedPath = homeController.videoCacheMap[videoUrl];
-
-      if (cachedPath != null) {
-        videoController = VideoPlayerController.file(File(cachedPath));
-      } else {
-        videoController = VideoPlayerController.network(videoUrl);
-      }
+      videoController = VideoPlayerController.network(videoUrl);
       await videoController.initialize();
 
       chewieController = ChewieController(
@@ -160,6 +163,11 @@ class MonitoringController extends GetxController {
   }
 
   void processCameraImage(CameraImage image) async {
+    if (cameraController == null || !cameraController!.value.isInitialized) {
+      isDetecting = false;
+      return;
+    }
+
     if (isDetecting || interpreter == null) return;
     isDetecting = true;
 
@@ -201,63 +209,53 @@ class MonitoringController extends GetxController {
         }
 
         if (keypoints.length == 99) {
-          poseSequence.add(keypoints);
-          if (poseSequence.length > sequenceLength) {
-            poseSequence.removeAt(0);
-          }
+          final input = [keypoints]; // 👈 bentuknya [1, 99]
 
-          if (poseSequence.length == sequenceLength) {
-            final input = [poseSequence];
-            final outputTensor = interpreter!.getOutputTensor(0);
-            final output = List.generate(
-              outputTensor.shape[0],
-              (_) => List.filled(outputTensor.shape[1], 0.0),
-            );
+          final outputTensor = interpreter!.getOutputTensor(0);
+          final output = List.generate(
+            outputTensor.shape[0],
+            (_) => List.filled(outputTensor.shape[1], 0.0),
+          );
 
-            interpreter!.run(input, output);
-            final maxIndex =
-                output[0].indexWhere((e) => e == output[0].reduce(max));
-            final prediction = labels.isNotEmpty && maxIndex < labels.length
-                ? labels[maxIndex]
-                : 'Gerakan ${maxIndex + 1}';
+          interpreter!.run(input, output);
 
-            // 👉 Simpan prediksi ke list dan hitung frame
-            predictedLabelsPerSecond.add(prediction);
-            frameCounter++;
+          final maxIndex =
+              output[0].indexWhere((e) => e == output[0].reduce(max));
+          final prediction = labels.isNotEmpty && maxIndex < labels.length
+              ? labels[maxIndex]
+              : 'Gerakan ${maxIndex + 1}';
 
-            if (frameCounter >= 30) {
-              // Hitung label yang paling sering muncul
-              final counts = <String, int>{};
-              for (var label in predictedLabelsPerSecond) {
-                counts[label] = (counts[label] ?? 0) + 1;
-              }
-              final mostFrequentLabel = counts.entries
-                  .reduce((a, b) => a.value > b.value ? a : b)
-                  .key;
+          // 👉 Simpan dan evaluasi per detik (seperti sebelumnya)
+          predictedLabelsPerSecond.add(prediction);
+          frameCounter++;
 
-              predictedLabel.value = mostFrequentLabel;
-
-              // Hitung skor
-              totalPredictions++;
-              if (mostFrequentLabel.toLowerCase() ==
-                  gerakanName.toLowerCase()) {
-                correctPredictions++;
-              }
-
-              final currentScore =
-                  (correctPredictions / totalPredictions) * 100;
-              score.value = double.parse(currentScore.toStringAsFixed(2));
-              accuracy.value = correctPredictions / totalPredictions;
-              final predictedCorrect =
-                  (mostFrequentLabel.toLowerCase() == gerakanName.toLowerCase())
-                      ? 1
-                      : 0;
-              precision.value = predictedCorrect / totalPredictions;
-
-              // Reset
-              predictedLabelsPerSecond.clear();
-              frameCounter = 0;
+          if (frameCounter >= 30) {
+            final counts = <String, int>{};
+            for (var label in predictedLabelsPerSecond) {
+              counts[label] = (counts[label] ?? 0) + 1;
             }
+            final mostFrequentLabel =
+                counts.entries.reduce((a, b) => a.value > b.value ? a : b).key;
+
+            predictedLabel.value = mostFrequentLabel;
+
+            // Hitung skor
+            totalPredictions++;
+            if (mostFrequentLabel.toLowerCase() == gerakanName.toLowerCase()) {
+              correctPredictions++;
+            }
+
+            final currentScore = (correctPredictions / totalPredictions) * 100;
+            score.value = double.parse(currentScore.toStringAsFixed(2));
+            accuracy.value = correctPredictions / totalPredictions;
+            final predictedCorrect =
+                (mostFrequentLabel.toLowerCase() == gerakanName.toLowerCase())
+                    ? 1
+                    : 0;
+            precision.value = predictedCorrect / totalPredictions;
+
+            predictedLabelsPerSecond.clear();
+            frameCounter = 0;
           }
         }
       }
