@@ -83,18 +83,19 @@ class MonitoringController extends GetxController {
     try {
       String modelPath;
       String labelPath;
+      print('🔄 Memuat model untuk tari: $tariName');
 
       switch (tariName.toLowerCase()) {
         case 'tari topeng endel':
-          modelPath = 'assets/models/tari_topeng_endel.tflite';
+          modelPath = 'assets/models/tari_topeng_endel2.tflite';
           labelPath = 'assets/labels/tari_topeng_endel.txt';
           break;
         case 'tari guci':
-          modelPath = 'assets/models/tari_guci_model.tflite';
+          modelPath = 'assets/models/tari_guci2.tflite';
           labelPath = 'assets/labels/tari_guci.txt';
           break;
-        case 'tari gambyong':
-          modelPath = 'assets/models/tari_gambyong.tflite';
+        case 'tari gambyong mari kangen':
+          modelPath = 'assets/models/tari_gambyong2.tflite';
           labelPath = 'assets/labels/tari_gambyong.txt';
           break;
         default:
@@ -224,7 +225,10 @@ class MonitoringController extends GetxController {
           final prediction = labels.isNotEmpty && maxIndex < labels.length
               ? labels[maxIndex]
               : 'Gerakan ${maxIndex + 1}';
-
+          if (labels.length != outputTensor.shape[1]) {
+            print(
+                "⚠️ Jumlah label (${labels.length}) tidak sesuai jumlah output kelas (${outputTensor.shape[1]})");
+          }
           // 👉 Simpan dan evaluasi per detik (seperti sebelumnya)
           predictedLabelsPerSecond.add(prediction);
           frameCounter++;
