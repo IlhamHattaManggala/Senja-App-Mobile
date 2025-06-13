@@ -148,7 +148,8 @@ class AccountView extends GetView<AccountController> {
                         ButtonCustom(
                           height: 55,
                           name: 'Keluar',
-                          leftIcon: Icon(Icons.logout),
+                          leftIcon:
+                              Icon(Icons.logout, color: PalleteColor.green50),
                           color: PalleteColor.green550,
                           textColor: PalleteColor.green50,
                           onPressed: () {

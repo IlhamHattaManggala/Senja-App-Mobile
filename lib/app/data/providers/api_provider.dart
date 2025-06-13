@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:senja_mobile/app/config/config_url.dart';
+import 'package:senja_mobile/app/data/models/artikel.dart';
 import 'package:senja_mobile/app/data/models/notifikasi.dart';
 import 'package:senja_mobile/app/data/models/seni_lainnya.dart';
 import 'package:senja_mobile/app/data/models/tari.dart';
@@ -277,6 +278,39 @@ class ApiProvider {
     } else {
       print('Fetch beranda gagal: ${response.body}');
       throw Exception('Failed to load beranda');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchArtikel(int page) async {
+    final token = storage.getToken();
+    final api = storage.getApiKey();
+    final response = await http.get(
+      Uri.parse('${ConfigUrl.beritaUrl}?page=$page'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'x-api-key': '$api',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final List data = jsonData['data'];
+      final int totalPages = jsonData['total_pages'];
+      final int currentPage = jsonData['current_page'];
+
+      final artikelList = data.map((item) {
+        return Artikel.fromJson(item);
+      }).toList();
+
+      return {
+        'data': artikelList,
+        'total_pages': totalPages,
+        'current_page': currentPage,
+      };
+    } else {
+      throw Exception('Gagal memuat data artikel');
     }
   }
 

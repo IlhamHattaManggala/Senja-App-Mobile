@@ -4,6 +4,8 @@ import '../modules/account/bindings/account_binding.dart';
 import '../modules/account/views/account_view.dart';
 import '../modules/bantuan/bindings/bantuan_binding.dart';
 import '../modules/bantuan/views/bantuan_view.dart';
+import '../modules/berita/bindings/berita_binding.dart';
+import '../modules/berita/views/berita_view.dart';
 import '../modules/detail/bindings/detail_binding.dart';
 import '../modules/detail/views/detail_view.dart';
 import '../modules/detail_notif/bindings/detail_notif_binding.dart';
@@ -162,6 +164,11 @@ class AppPages {
       name: _Paths.VERIFY_EMAIL,
       page: () => const VerifyEmailView(),
       binding: VerifyEmailBinding(),
+    ),
+    GetPage(
+      name: _Paths.BERITA,
+      page: () => const BeritaView(),
+      binding: BeritaBinding(),
     ),
   ];
 }

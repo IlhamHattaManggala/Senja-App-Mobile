@@ -25,6 +25,7 @@ abstract class Routes {
   static const VERIFIKASI = _Paths.VERIFIKASI;
   static const RESET_PASSWORD = _Paths.RESET_PASSWORD;
   static const VERIFY_EMAIL = _Paths.VERIFY_EMAIL;
+  static const BERITA = _Paths.BERITA;
 }
 
 abstract class _Paths {
@@ -51,4 +52,5 @@ abstract class _Paths {
   static const VERIFIKASI = '/verifikasi';
   static const RESET_PASSWORD = '/reset-password';
   static const VERIFY_EMAIL = '/verify-email';
+  static const BERITA = '/berita';
 }

@@ -130,7 +130,8 @@ class HomeView extends GetView<HomeController> {
                                   onPressed: () {
                                     Get.toNamed('/berita');
                                   },
-                                  icon: Icon(Icons.newspaper),
+                                  icon: Icon(Icons.newspaper,
+                                      color: PalleteColor.green50),
                                   label: Text("Berita Tari"),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: PalleteColor.green550,
@@ -145,7 +146,8 @@ class HomeView extends GetView<HomeController> {
                                   onPressed: () {
                                     controller.goToWeb();
                                   },
-                                  icon: Icon(Icons.bar_chart),
+                                  icon: Icon(Icons.bar_chart,
+                                      color: PalleteColor.green50),
                                   label: Text("Visualisasi Data Tari"),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: PalleteColor.green550,
