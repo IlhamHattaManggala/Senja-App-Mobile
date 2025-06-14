@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:senja_mobile/app/config/config_url.dart';
 import 'package:senja_mobile/app/data/models/artikel.dart';
+import 'package:senja_mobile/app/data/models/log_activity.dart';
 import 'package:senja_mobile/app/data/models/notifikasi.dart';
 import 'package:senja_mobile/app/data/models/seni_lainnya.dart';
 import 'package:senja_mobile/app/data/models/tari.dart';
@@ -39,12 +40,10 @@ class ApiProvider {
 
       return user;
     } else {
-      // Optional: bisa print log atau throw exception di sini
       final body = json.decode(response.body);
 
       // Cetak pesan error dari backend (jika ada)
       final message = body['pesan'] ?? body['message'] ?? 'Login gagal';
-      print('Login failed: $message');
 
       // Tampilkan juga ke UI jika kamu ingin tangkap exception-nya nanti
       throw Exception(message);
@@ -106,18 +105,14 @@ class ApiProvider {
             'token': data['token'], // jika diperlukan
           });
 
-          print('Login Google berhasil & data backend diterima');
           return user;
         } else {
-          print(
-              'Login Firebase berhasil, tapi gagal kirim ke backend: ${response.body}');
           return null;
         }
       }
 
       return null;
     } catch (e) {
-      print("Terjadi error saat login Google: $e");
       return null;
     }
   }
@@ -151,9 +146,8 @@ class ApiProvider {
       return user;
     } else {
       // gagal
-      print('Register failed: ${response.body}');
+      return null;
     }
-    return null;
   }
 
   Future<User?> registerGoogle() async {
@@ -211,18 +205,14 @@ class ApiProvider {
             'token': data['token'], // jika diperlukan
           });
 
-          print('Registrasi Google berhasil & data backend diterima');
           return user;
         } else {
-          print(
-              'Login Firebase berhasil, tapi gagal kirim ke backend (register): ${response.body}');
           return null;
         }
       }
 
       return null;
     } catch (e) {
-      print("Terjadi error saat register Google: $e");
       return null;
     }
   }
@@ -276,7 +266,6 @@ class ApiProvider {
         'seni_lainnya': listSeniLainnya,
       };
     } else {
-      print('Fetch beranda gagal: ${response.body}');
       throw Exception('Failed to load beranda');
     }
   }
@@ -396,9 +385,6 @@ class ApiProvider {
       },
     );
 
-    print("Response: ${response.body}");
-    print("Status Code: ${response.statusCode}");
-
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final body = jsonDecode(response.body);
       final List<dynamic> data = body['notifikasi'];
@@ -447,6 +433,29 @@ class ApiProvider {
     }
   }
 
+  Future<List<LogActivity>> fetchLogActivity() async {
+    final token = storage.getToken();
+    final api = storage.getApiKey();
+    final url = Uri.parse(ConfigUrl.logActivityUrl);
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+        'x-api-key': '$api',
+      },
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final body = jsonDecode(response.body);
+      final List data = body['data'];
+      return data.map((json) => LogActivity.fromJson(json)).toList();
+    } else {
+      throw Exception("Gagal mengambil data log aktivitas");
+    }
+  }
+
   Future<User?> fetchUser() async {
     final token = storage.getToken();
     final api = storage.getApiKey();
@@ -460,12 +469,9 @@ class ApiProvider {
         'x-api-key': '$api',
       },
     );
-    print("Response: ${response.body}");
-    print("Response: ${response.statusCode}");
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final body = jsonDecode(response.body);
-      print(body);
       return User.fromJson(body['data']);
     } else {
       throw Exception("Gagal mengambil data user");
@@ -538,14 +544,11 @@ class ApiProvider {
       );
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        print('✅ Data latihan berhasil dikirim');
         return true;
       } else {
-        print('❌ Gagal mengirim data latihan: ${response.body}');
         return false;
       }
     } catch (e) {
-      print('❌ Error saat mengirim data latihan: $e');
       return false;
     }
   }
@@ -568,17 +571,12 @@ class ApiProvider {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
         final data = json['data'] as List;
-
-        print('✅ Riwayat berhasil diambil');
-
         // Ubah ke List<Map<String, dynamic>> jika diperlukan
         return data.cast<Map<String, dynamic>>();
       } else {
-        print('❌ Gagal mengambil riwayat: ${response.body}');
         return null;
       }
     } catch (e) {
-      print('❌ Error saat mengambil riwayat: $e');
       return null;
     }
   }

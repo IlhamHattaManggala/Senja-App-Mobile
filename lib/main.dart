@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:senja_mobile/app/modules/navbar/controllers/navbar_controller.dart';
 import 'firebase_options.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'app/routes/app_pages.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -115,6 +116,8 @@ void main() async {
   // Subskripsi ke topik
   FirebaseMessaging.instance.subscribeToTopic("user_baru");
 
+  // Inisialisasi Intl untuk format tanggal
+  await initializeDateFormatting('id_ID', null);
   runApp(
     GetMaterialApp(
       debugShowCheckedModeBanner: false,

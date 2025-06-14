@@ -1,5 +1,6 @@
 class ConfigUrl {
-  static const String base = 'https://eea9-36-68-52-231.ngrok-free.app';
+  static const String base =
+      'https://7c8a7101c5014766fbcef01a1efb4c4c.serveo.net';
   static const String baseUrl = '$base/api/users/v1';
   static const String loginUrl = '$baseUrl/login';
   static const String loginGoogleUrl = '$baseUrl/login-google';
@@ -17,6 +18,7 @@ class ConfigUrl {
   static const String profileUrl = '$baseUrl/profile';
   static const String UpdateProfileUrl = '$baseUrl/profile';
   static const String beritaUrl = '$baseUrl/berita';
+  static const String logActivityUrl = '$baseUrl/log-aktivitas';
 
   static const String StreamlitUrl = 'https://senjaapp.streamlit.app/';
 }

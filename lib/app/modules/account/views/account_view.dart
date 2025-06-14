@@ -126,6 +126,16 @@ class AccountView extends GetView<AccountController> {
                           height: 15,
                         ),
                         CardProfile(
+                          label: 'Log Aktivitas',
+                          leftIcon: Icons.local_activity,
+                          onTap: () {
+                            Get.toNamed('/log-activity');
+                          },
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        CardProfile(
                           label: 'Bantuan & Dukungan',
                           leftIcon: Icons.help,
                           onTap: () {

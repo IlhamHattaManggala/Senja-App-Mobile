@@ -18,6 +18,8 @@ import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/laporan/bindings/laporan_binding.dart';
 import '../modules/laporan/views/laporan_view.dart';
+import '../modules/log_activity/bindings/log_activity_binding.dart';
+import '../modules/log_activity/views/log_activity_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/lupa_password/bindings/lupa_password_binding.dart';
@@ -169,6 +171,11 @@ class AppPages {
       name: _Paths.BERITA,
       page: () => const BeritaView(),
       binding: BeritaBinding(),
+    ),
+    GetPage(
+      name: _Paths.LOG_ACTIVITY,
+      page: () => const LogActivityView(),
+      binding: LogActivityBinding(),
     ),
   ];
 }
