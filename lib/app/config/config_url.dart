@@ -1,6 +1,5 @@
 class ConfigUrl {
-  static const String base =
-      'https://7c8a7101c5014766fbcef01a1efb4c4c.serveo.net';
+  static const String base = 'https://200d-36-68-53-232.ngrok-free.app';
   static const String baseUrl = '$base/api/users/v1';
   static const String loginUrl = '$baseUrl/login';
   static const String loginGoogleUrl = '$baseUrl/login-google';

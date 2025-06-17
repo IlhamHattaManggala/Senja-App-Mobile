@@ -87,15 +87,15 @@ class MonitoringController extends GetxController {
 
       switch (tariName.toLowerCase()) {
         case 'tari topeng endel':
-          modelPath = 'assets/models/tari_topeng_endel.tflite';
+          modelPath = 'assets/models/tari_topeng_endel5.tflite';
           labelPath = 'assets/labels/tari_topeng_endel.txt';
           break;
         case 'tari guci':
-          modelPath = 'assets/models/tari_guci.tflite';
+          modelPath = 'assets/models/tari_guci2.tflite';
           labelPath = 'assets/labels/tari_guci.txt';
           break;
         case 'tari gambyong mari kangen':
-          modelPath = 'assets/models/tari_gambyong.tflite';
+          modelPath = 'assets/models/tari_gambyong2.tflite';
           labelPath = 'assets/labels/tari_gambyong.txt';
           break;
         default:
@@ -210,7 +210,9 @@ class MonitoringController extends GetxController {
         }
 
         if (keypoints.length == 99) {
-          final input = [keypoints]; // 👈 bentuknya [1, 99]
+          // final input = [keypoints]; // 👈 bentuknya [1, 99]
+          final input = List.generate(
+              1, (_) => keypoints.map((v) => [v]).toList()); // [1, 99, 1]
 
           final outputTensor = interpreter!.getOutputTensor(0);
           final output = List.generate(
