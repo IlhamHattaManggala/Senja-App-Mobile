@@ -1,5 +1,6 @@
 class ConfigUrl {
-  static const String base = 'https://200d-36-68-53-232.ngrok-free.app';
+  // static const String base = 'https://parrot-on-dove.ngrok-free.app';
+  static const String base = 'http://192.168.56.110:5000';
   static const String baseUrl = '$base/api/users/v1';
   static const String loginUrl = '$baseUrl/login';
   static const String loginGoogleUrl = '$baseUrl/login-google';

@@ -63,6 +63,7 @@ class SplashscreenView extends GetView<SplashscreenController> {
                             duration: const Duration(milliseconds: 700),
                             // ruang supaya animasi kelihatan
                             child: ButtonCustom(
+                              key: Key('Button Mulai'),
                               height: 55,
                               name: 'Mulai',
                               rightIcon: Icon(Icons.arrow_forward),
@@ -73,6 +74,26 @@ class SplashscreenView extends GetView<SplashscreenController> {
                           ),
                         );
                       })
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   height: 55,
+                      //   child: ElevatedButton.icon(
+                      //     key: const Key('Button Mulai'),
+                      //     style: ElevatedButton.styleFrom(
+                      //       backgroundColor: PalleteColor.green50,
+                      //       foregroundColor: PalleteColor.green550,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(12),
+                      //       ),
+                      //     ),
+                      //     icon: const Icon(Icons.arrow_forward),
+                      //     label: const Text(
+                      //       'Mulai',
+                      //       style: TextStyle(fontSize: 16),
+                      //     ),
+                      //     onPressed: () => Get.toNamed('/overview'),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

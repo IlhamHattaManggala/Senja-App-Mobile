@@ -70,10 +70,8 @@ class MonitoringView extends GetView<MonitoringController> {
                                   "Prediksi", controller.predictedLabel.value),
                               infoItem("Akurasi",
                                   controller.accuracy.value.toStringAsFixed(2)),
-                              infoItem(
-                                  "Presisi",
-                                  controller.precision.value
-                                      .toStringAsFixed(2)),
+                              infoItem("Confidence",
+                                  "${controller.predictedConfidence.value.toStringAsFixed(2)}%"),
                               infoItem("Skor",
                                   "${controller.score.value.toStringAsFixed(2)}%"),
                             ],

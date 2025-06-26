@@ -144,7 +144,8 @@ class HomeView extends GetView<HomeController> {
                                 const SizedBox(width: 10),
                                 ElevatedButton.icon(
                                   onPressed: () {
-                                    controller.goToWeb();
+                                    // controller.goToWeb();
+                                    Get.toNamed('/visualisasi');
                                   },
                                   icon: Icon(Icons.bar_chart,
                                       color: PalleteColor.green50),

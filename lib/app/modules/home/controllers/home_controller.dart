@@ -55,10 +55,10 @@ class HomeController extends GetxController {
 
   void goToWeb() async {
     final url = Uri.parse(ConfigUrl.StreamlitUrl);
-    if (await canLaunchUrl(url)) {
+    try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      Get.snackbar("Gagal", "Tidak dapat membuka link");
+    } catch (e) {
+      Get.snackbar("Gagal", "Tidak dapat membuka link: $e");
     }
   }
 }

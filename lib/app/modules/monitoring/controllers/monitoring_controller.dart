@@ -31,6 +31,7 @@ class MonitoringController extends GetxController {
   int correctPredictions = 0;
   final accuracy = 0.0.obs;
   final precision = 0.0.obs;
+  final predictedConfidence = 0.0.obs;
 
   late String gerakanName;
   late Interpreter? interpreter;
@@ -87,15 +88,15 @@ class MonitoringController extends GetxController {
 
       switch (tariName.toLowerCase()) {
         case 'tari topeng endel':
-          modelPath = 'assets/models/tari_topeng_endel5.tflite';
+          modelPath = 'assets/models/tari_topeng_endel4.tflite';
           labelPath = 'assets/labels/tari_topeng_endel.txt';
           break;
         case 'tari guci':
-          modelPath = 'assets/models/tari_guci2.tflite';
+          modelPath = 'assets/models/tari_guci3.tflite';
           labelPath = 'assets/labels/tari_guci.txt';
           break;
         case 'tari gambyong mari kangen':
-          modelPath = 'assets/models/tari_gambyong2.tflite';
+          modelPath = 'assets/models/tari_gambyong3.tflite';
           labelPath = 'assets/labels/tari_gambyong.txt';
           break;
         default:
@@ -164,6 +165,8 @@ class MonitoringController extends GetxController {
   }
 
   void processCameraImage(CameraImage image) async {
+    if (!isTraining.value) return;
+
     if (cameraController == null || !cameraController!.value.isInitialized) {
       isDetecting = false;
       return;
@@ -210,9 +213,9 @@ class MonitoringController extends GetxController {
         }
 
         if (keypoints.length == 99) {
-          // final input = [keypoints]; // 👈 bentuknya [1, 99]
-          final input = List.generate(
-              1, (_) => keypoints.map((v) => [v]).toList()); // [1, 99, 1]
+          final input = [keypoints]; // 👈 bentuknya [1, 99]
+          // final input = List.generate(
+          //     1, (_) => keypoints.map((v) => [v]).toList()); // [1, 99, 1]
 
           final outputTensor = interpreter!.getOutputTensor(0);
           final output = List.generate(
@@ -222,11 +225,17 @@ class MonitoringController extends GetxController {
 
           interpreter!.run(input, output);
 
-          final maxIndex =
-              output[0].indexWhere((e) => e == output[0].reduce(max));
+          final scores = output[0];
+          final maxValue = scores.reduce(max);
+          final maxIndex = scores.indexOf(maxValue);
+          final confidence = double.parse((maxValue * 100).toStringAsFixed(2));
+
           final prediction = labels.isNotEmpty && maxIndex < labels.length
               ? labels[maxIndex]
               : 'Gerakan ${maxIndex + 1}';
+
+          predictedConfidence.value = confidence;
+
           if (labels.length != outputTensor.shape[1]) {
             print(
                 "⚠️ Jumlah label (${labels.length}) tidak sesuai jumlah output kelas (${outputTensor.shape[1]})");

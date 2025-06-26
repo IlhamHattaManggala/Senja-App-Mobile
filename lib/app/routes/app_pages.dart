@@ -34,6 +34,8 @@ import '../modules/overview/bindings/overview_binding.dart';
 import '../modules/overview/views/overview_view.dart';
 import '../modules/pengaturan_akun/bindings/pengaturan_akun_binding.dart';
 import '../modules/pengaturan_akun/views/pengaturan_akun_view.dart';
+import '../modules/preview/bindings/preview_binding.dart';
+import '../modules/preview/views/preview_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 import '../modules/reset_password/bindings/reset_password_binding.dart';
@@ -48,6 +50,8 @@ import '../modules/verifikasi/bindings/verifikasi_binding.dart';
 import '../modules/verifikasi/views/verifikasi_view.dart';
 import '../modules/verify-email/bindings/verify_email_binding.dart';
 import '../modules/verify-email/views/verify_email_view.dart';
+import '../modules/visualisasi/bindings/visualisasi_binding.dart';
+import '../modules/visualisasi/views/visualisasi_view.dart';
 
 part 'app_routes.dart';
 
@@ -176,6 +180,16 @@ class AppPages {
       name: _Paths.LOG_ACTIVITY,
       page: () => const LogActivityView(),
       binding: LogActivityBinding(),
+    ),
+    GetPage(
+      name: _Paths.VISUALISASI,
+      page: () => const VisualisasiView(),
+      binding: VisualisasiBinding(),
+    ),
+    GetPage(
+      name: _Paths.PREVIEW,
+      page: () => const PreviewView(),
+      binding: PreviewBinding(),
     ),
   ];
 }

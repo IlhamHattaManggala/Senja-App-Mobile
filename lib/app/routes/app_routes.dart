@@ -27,6 +27,8 @@ abstract class Routes {
   static const VERIFY_EMAIL = _Paths.VERIFY_EMAIL;
   static const BERITA = _Paths.BERITA;
   static const LOG_ACTIVITY = _Paths.LOG_ACTIVITY;
+  static const VISUALISASI = _Paths.VISUALISASI;
+  static const PREVIEW = _Paths.PREVIEW;
 }
 
 abstract class _Paths {
@@ -55,4 +57,6 @@ abstract class _Paths {
   static const VERIFY_EMAIL = '/verify-email';
   static const BERITA = '/berita';
   static const LOG_ACTIVITY = '/log-activity';
+  static const VISUALISASI = '/visualisasi';
+  static const PREVIEW = '/preview';
 }
