@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/assets/video/tari-guci
+/assets/video/tari-gambyong-mari-kangen
+/assets/video/tari-topeng-endel
